@@ -20,6 +20,11 @@ git checkout -b <branch-name>
 git branch
 ```
 
+## set the upstream branch
+```bash
+git push --set-upstream origin <branch-name>
+```
+
 ## Delete a branch
 ```bash
 git branch -d <branch-name>
@@ -34,3 +39,42 @@ git branch -D <branch-name>
 ```bash
 git merge <branch-name>
 ```
+# Commits
+
+## Add all files to the staging area
+```bash
+git add .
+```
+## Add a specific file to the staging area
+```bash
+git add <file-name>
+```
+
+## Commit changes
+```bash
+git commit -m "commit message"
+```
+## voir la liste des fichiers modifiés
+```bash
+git status
+```
+
+## Push changes to a remote repository
+
+
+
+```bash
+git push
+```
+## Pull changes from a remote repository
+```bash
+git pull
+```
+
+
+## merge branch to master
+```bash
+git checkout master
+git merge <branch-name>
+```
+
