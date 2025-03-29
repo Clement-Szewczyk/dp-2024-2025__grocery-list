@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CSV {
-    private String fileName;
+    private final String fileName;
     private List<String> groceryList;
 
     public CSV(String fileName) {

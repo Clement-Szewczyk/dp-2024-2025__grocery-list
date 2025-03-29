@@ -44,6 +44,10 @@ public class CLI {
             if (isCSV) {
                 CSV csv = new CSV(fileName);
                 return handleCSVCommand(csv, command, positionalArgs);
+            } else if (isJSON)
+            {
+                JSON json = new JSON(fileName);
+                return handleJSONCommand(json, command, positionalArgs);
             } else {
                 return Main.exec(args);
             }
@@ -54,39 +58,77 @@ public class CLI {
     }
 
     private static int handleCSVCommand(CSV csv, String command, String[] args) {
-        switch (command) {
-            case "add":
+        return switch (command) {
+            case "add" -> {
                 if (args.length < 3) {
                     System.err.println("Missing arguments for add command");
-                    return 1;
+                    yield 1;
                 }
                 try {
                     String item = args[1];
                     int quantity = Integer.parseInt(args[2]);
                     csv.add(item, quantity);
-                    return 0;
+                    yield 0;
                 } catch (NumberFormatException e) {
                     System.err.println("Invalid quantity format");
-                    return 1;
+                    yield 1;
                 }
-
-            case "list":
+            }
+            case "list" -> {
                 for (String item : csv.list()) {
                     System.out.println(item);
                 }
-                return 0;
-
-            case "remove":
+                yield 0;
+            }
+            case "remove" -> {
                 if (args.length < 2) {
                     System.err.println("Missing arguments for remove command");
-                    return 1;
+                    yield 1;
                 }
                 csv.remove(args[1]);
-                return 0;
-
-            default:
+                yield 0;
+            }
+            default -> {
                 System.err.println("Unknown command: " + command);
-                return 1;
-        }
+                yield 1;
+            }
+        };
+    }
+
+
+    private static int handleJSONCommand(JSON json, String command, String[] args) {
+        return switch (command) {
+            case "add" -> {
+                if (args.length < 3) {
+                    System.err.println("Missing arguments for add command");
+                    yield 1;
+                }
+                try {
+                    String item = args[1];
+                    int quantity = Integer.parseInt(args[2]);
+                    json.add(item, quantity);
+                    yield 0;
+                } catch (NumberFormatException e) {
+                    System.err.println("Invalid quantity format");
+                    yield 1;
+                }
+            }
+            case "list" -> {
+                json.list();
+                yield 0;
+            }
+            case "remove" -> {
+                if (args.length < 2) {
+                    System.err.println("Missing arguments for remove command");
+                    yield 1;
+                }
+                json.remove(args[1]);
+                yield 0;
+            }
+            default -> {
+                System.err.println("Unknown command: " + command);
+                yield 1;
+            }
+        };
     }
 }
