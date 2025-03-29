@@ -37,15 +37,50 @@ public class CSV {
         }
     }
 
-    public void add(String item, int quantity) {
-        groceryList.add(item + "," + quantity);
+    public void add(String itemName, int quantity) {
+        boolean itemFound = false;
+        for (int i = 0; i < groceryList.size(); i++) {
+            String currentItem = groceryList.get(i);
+            if (currentItem.startsWith(itemName)) {
+                int currentQuantity = Integer.parseInt(currentItem.split(",")[1]);
+                groceryList.set(i, itemName + "," + (currentQuantity + quantity));
+                itemFound = true;
+                break;
+            }
+        }
+        if (!itemFound) {
+            groceryList.add(itemName + "," + quantity);
+        }
         saveToFile();
     }
-
     public void remove(String itemName) {
-        groceryList = groceryList.stream()
-                .filter(item -> !item.contains(itemName))
-                .collect(Collectors.toList());
+        remove(itemName, 0);
+    }
+
+    public void remove(String itemName, int quantity) {
+        if (quantity <= 0) {
+            groceryList = groceryList.stream()
+                    .filter(item -> !item.startsWith(itemName + ","))
+                    .collect(Collectors.toList());
+        } else {
+            boolean itemFound = false;
+            for (int i = 0; i < groceryList.size(); i++) {
+                String currentItem = groceryList.get(i);
+                if (currentItem.startsWith(itemName)) {
+                    int currentQuantity = Integer.parseInt(currentItem.split(",")[1]);
+                    if (currentQuantity > quantity) {
+                        groceryList.set(i, itemName + "," + (currentQuantity - quantity));
+                    } else {
+                        groceryList.remove(i);
+                    }
+                    itemFound = true;
+                    break;
+                }
+            }
+            if (!itemFound) {
+                System.out.println("Item not found in the list.");
+            }
+        }
         saveToFile();
     }
 
@@ -61,52 +96,4 @@ public class CSV {
                 '}';
     }
 
-
-
-    public static void main(String[] args) {
-        // Create an instance of the CSV class
-        try {
-            // Create a grocery.csv file or use an existing one
-            String fileName = "grocery.csv";
-
-            // Create an instance of the CSV class
-            CSV csv = new CSV(fileName);
-
-            // Example of adding items
-            System.out.println("Adding items to the grocery list...");
-            csv.add("Apple", 5);
-            csv.add("Banana", 3);
-            csv.add("Orange", 2);
-
-            // Example of listing items
-            System.out.println("\nCurrent grocery list:");
-            List<String> items = csv.list();
-            for (String item : items) {
-                System.out.println(item);
-            }
-
-            // Example of removing an item
-            System.out.println("\nRemoving Banana from the list...");
-            csv.remove("Banana");
-
-            // Listing items after removal
-            System.out.println("\nUpdated grocery list:");
-            items = csv.list();
-            for (String item : items) {
-                System.out.println(item);
-            }
-
-            // Verify file contents
-            System.out.println("\nFile content verification:");
-            if (Files.exists(Paths.get(fileName))) {
-                List<String> fileContent = Files.readAllLines(Paths.get(fileName));
-                for (String line : fileContent) {
-                    System.out.println(line);
-                }
-            }
-
-        } catch (IOException e) {
-            System.err.println("Error: " + e.getMessage());
-        }
-    }
 }
