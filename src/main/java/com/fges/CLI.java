@@ -85,7 +85,18 @@ public class CLI {
                     System.err.println("Missing arguments for remove command");
                     yield 1;
                 }
-                csv.remove(args[1]);
+                String item = args[1];
+                if (args.length >= 3) {
+                    try {
+                        int quantity = Integer.parseInt(args[2]);
+                        csv.remove(item, quantity);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Invalid quantity format");
+                        yield 1;
+                    }
+                } else {
+                    csv.remove(item);
+                }
                 yield 0;
             }
             default -> {
@@ -122,7 +133,18 @@ public class CLI {
                     System.err.println("Missing arguments for remove command");
                     yield 1;
                 }
-                json.remove(args[1]);
+                String item = args[1];
+                if (args.length >= 3) {
+                    try {
+                        int quantity = Integer.parseInt(args[2]);
+                        json.remove(item, quantity);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Invalid quantity format");
+                        yield 1;
+                    }
+                } else {
+                    json.remove(item);
+                }
                 yield 0;
             }
             default -> {
