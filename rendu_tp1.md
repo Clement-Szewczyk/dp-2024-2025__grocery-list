@@ -55,6 +55,9 @@ Nous avons validé le bon fonctionnement de la CLI en simulant différentes util
 
 Les tests ont été réalisés avec JUnit 5, en utilisant AssertJ pour des assertions plus claires et robustes. Nous avons également utilisé des répertoires temporaires pour manipuler des fichiers sans affecter les données réelles. L’ensemble de la suite de tests permet de valider que l’application fonctionne comme prévu dans différents scénarios d’usage.
 
+### Organisation du Travail  
+Nous avons travaillé à trois sur ce projet, en nous partageant les tâches tout en utilisant un seul ordinateur pour la mise en place du code et des tests sur GitHub. Cette organisation nous a permis de réfléchir ensemble aux solutions, d’échanger rapidement sur les problèmes rencontrés et de garantir une meilleure qualité du code grâce aux retours instantanés de chacun.  
+
 ## Conclusion
 
 Le projet "Grocery List" est une application fonctionnelle qui permet une gestion efficace des listes de courses via une interface en ligne de commande. L'utilisation de fichiers CSV et JSON assure la persistance des données, et la modularité du code permet de futures améliorations.
