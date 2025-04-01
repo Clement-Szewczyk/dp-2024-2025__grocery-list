@@ -1,7 +1,6 @@
 package com.fges;
 
 import org.apache.commons.cli.*;
-import java.io.IOException;
 
 
 public class CLI {
@@ -24,10 +23,13 @@ public class CLI {
         }
 
         String fileName = cmd.getOptionValue("s");
-        boolean isCSV = fileName.endsWith(".csv");
-        boolean isJSON = fileName.endsWith(".json");
+        GroceryFile groceryFile;
 
-        if (!isCSV && !isJSON) {
+        if (fileName.endsWith(".csv")) {
+            groceryFile = new CSV(fileName);
+        } else if (fileName.endsWith(".json")) {
+            groceryFile = new JSON(fileName);
+        } else {
             System.err.println("Unsupported file format. Use .csv or .json");
             return 1;
         }
@@ -39,25 +41,10 @@ public class CLI {
         }
 
         String command = positionalArgs[0];
-
-        try {
-            if (isCSV) {
-                CSV csv = new CSV(fileName);
-                return handleCSVCommand(csv, command, positionalArgs);
-            } else if (isJSON)
-            {
-                JSON json = new JSON(fileName);
-                return handleJSONCommand(json, command, positionalArgs);
-            } else {
-                return Main.exec(args);
-            }
-        } catch (IOException e) {
-            System.err.println("Error processing file: " + e.getMessage());
-            return 1;
-        }
+        return handleCommand(groceryFile, command, positionalArgs);
     }
 
-    private static int handleCSVCommand(CSV csv, String command, String[] args) {
+    private static int handleCommand(GroceryFile groceryFile, String command, String[] args) {
         return switch (command) {
             case "add" -> {
                 if (args.length < 3) {
@@ -67,7 +54,7 @@ public class CLI {
                 try {
                     String item = args[1];
                     int quantity = Integer.parseInt(args[2]);
-                    csv.add(item, quantity);
+                    groceryFile.add(item, quantity);
                     yield 0;
                 } catch (NumberFormatException e) {
                     System.err.println("Invalid quantity format");
@@ -75,7 +62,7 @@ public class CLI {
                 }
             }
             case "list" -> {
-                for (String item : csv.list()) {
+                for (String item : groceryFile.list()) {
                     System.out.println(item);
                 }
                 yield 0;
@@ -89,61 +76,13 @@ public class CLI {
                 if (args.length >= 3) {
                     try {
                         int quantity = Integer.parseInt(args[2]);
-                        csv.remove(item, quantity);
+                        groceryFile.remove(item, quantity);
                     } catch (NumberFormatException e) {
                         System.err.println("Invalid quantity format");
                         yield 1;
                     }
                 } else {
-                    csv.remove(item);
-                }
-                yield 0;
-            }
-            default -> {
-                System.err.println("Unknown command: " + command);
-                yield 1;
-            }
-        };
-    }
-
-
-    private static int handleJSONCommand(JSON json, String command, String[] args) {
-        return switch (command) {
-            case "add" -> {
-                if (args.length < 3) {
-                    System.err.println("Missing arguments for add command");
-                    yield 1;
-                }
-                try {
-                    String item = args[1];
-                    int quantity = Integer.parseInt(args[2]);
-                    json.add(item, quantity);
-                    yield 0;
-                } catch (NumberFormatException e) {
-                    System.err.println("Invalid quantity format");
-                    yield 1;
-                }
-            }
-            case "list" -> {
-                json.list();
-                yield 0;
-            }
-            case "remove" -> {
-                if (args.length < 2) {
-                    System.err.println("Missing arguments for remove command");
-                    yield 1;
-                }
-                String item = args[1];
-                if (args.length >= 3) {
-                    try {
-                        int quantity = Integer.parseInt(args[2]);
-                        json.remove(item, quantity);
-                    } catch (NumberFormatException e) {
-                        System.err.println("Invalid quantity format");
-                        yield 1;
-                    }
-                } else {
-                    json.remove(item);
+                    groceryFile.remove(item);
                 }
                 yield 0;
             }

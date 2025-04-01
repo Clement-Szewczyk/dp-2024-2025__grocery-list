@@ -1,35 +1,25 @@
 package com.fges;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CSV {
-    private final String fileName;
-    private List<String> groceryList;
+public class CSV extends GroceryFile {
 
     public CSV(String fileName) {
-        this.fileName = fileName;
-        this.groceryList = new ArrayList<>();
-        loadFromFile();
+        super(fileName);
     }
 
-    private void loadFromFile() {
-        Path filePath = Paths.get(fileName);
-        try {
-            if (Files.exists(filePath)) {
-                groceryList = Files.readAllLines(filePath);
-            }
-        } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
-        }
+    @Override
+    protected void parseFileContents(List<String> fileContents) {
+        groceryList = new ArrayList<>(fileContents);
     }
 
-    private void saveToFile() {
+    @Override
+    protected void saveToFile() {
         try {
             Files.write(Paths.get(fileName), groceryList);
         } catch (IOException e) {
@@ -37,11 +27,12 @@ public class CSV {
         }
     }
 
+    @Override
     public void add(String itemName, int quantity) {
         boolean itemFound = false;
         for (int i = 0; i < groceryList.size(); i++) {
             String currentItem = groceryList.get(i);
-            if (currentItem.startsWith(itemName)) {
+            if (currentItem.startsWith(itemName + ",")) {
                 int currentQuantity = Integer.parseInt(currentItem.split(",")[1]);
                 groceryList.set(i, itemName + "," + (currentQuantity + quantity));
                 itemFound = true;
@@ -53,10 +44,8 @@ public class CSV {
         }
         saveToFile();
     }
-    public void remove(String itemName) {
-        remove(itemName, 0);
-    }
 
+    @Override
     public void remove(String itemName, int quantity) {
         if (quantity <= 0) {
             groceryList = groceryList.stream()
@@ -66,7 +55,7 @@ public class CSV {
             boolean itemFound = false;
             for (int i = 0; i < groceryList.size(); i++) {
                 String currentItem = groceryList.get(i);
-                if (currentItem.startsWith(itemName)) {
+                if (currentItem.startsWith(itemName + ",")) {
                     int currentQuantity = Integer.parseInt(currentItem.split(",")[1]);
                     if (currentQuantity > quantity) {
                         groceryList.set(i, itemName + "," + (currentQuantity - quantity));
@@ -84,16 +73,8 @@ public class CSV {
         saveToFile();
     }
 
+    @Override
     public List<String> list() {
         return new ArrayList<>(groceryList);
     }
-
-    @Override
-    public String toString() {
-        return "CSV{" +
-                "fileName='" + fileName + '\'' +
-                ", groceryList=" + groceryList +
-                '}';
-    }
-
 }
