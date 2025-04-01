@@ -7,74 +7,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CSV extends GroceryFile {
+public class CSV {
 
-    public CSV(String fileName) {
-        super(fileName);
+    // Méthode pour sauvegarder la liste d'éléments au format CSV dans un fichier
+    public void save(List<Item> groceryList, String fileName) throws IOException {
+        List<String> lines = groceryList.stream()
+                .map(item -> item.getName() + "," + item.quantity)
+                .collect(Collectors.toList());
+        Files.write(Paths.get(fileName), lines);
     }
 
-    @Override
-    protected void parseFileContents(List<String> fileContents) {
-        groceryList = new ArrayList<>(fileContents);
-    }
-
-    @Override
-    protected void saveToFile() {
-        try {
-            Files.write(Paths.get(fileName), groceryList);
-        } catch (IOException e) {
-            System.err.println("Error writing to file: " + e.getMessage());
-        }
-    }
-
-    @Override
-    public void add(String itemName, int quantity) {
-        boolean itemFound = false;
-        for (int i = 0; i < groceryList.size(); i++) {
-            String currentItem = groceryList.get(i);
-            if (currentItem.startsWith(itemName + ",")) {
-                int currentQuantity = Integer.parseInt(currentItem.split(",")[1]);
-                groceryList.set(i, itemName + "," + (currentQuantity + quantity));
-                itemFound = true;
-                break;
-            }
-        }
-        if (!itemFound) {
-            groceryList.add(itemName + "," + quantity);
-        }
-        saveToFile();
-    }
-
-    @Override
-    public void remove(String itemName, int quantity) {
-        if (quantity <= 0) {
-            groceryList = groceryList.stream()
-                    .filter(item -> !item.startsWith(itemName + ","))
-                    .collect(Collectors.toList());
-        } else {
-            boolean itemFound = false;
-            for (int i = 0; i < groceryList.size(); i++) {
-                String currentItem = groceryList.get(i);
-                if (currentItem.startsWith(itemName + ",")) {
-                    int currentQuantity = Integer.parseInt(currentItem.split(",")[1]);
-                    if (currentQuantity > quantity) {
-                        groceryList.set(i, itemName + "," + (currentQuantity - quantity));
-                    } else {
-                        groceryList.remove(i);
-                    }
-                    itemFound = true;
-                    break;
+    // Méthode pour charger la liste d'éléments depuis un fichier CSV
+    public void load(List<Item> groceryList, String fileName) throws IOException {
+        List<String> fileContents = Files.readAllLines(Paths.get(fileName));
+        groceryList.clear();
+        for (String line : fileContents) {
+            String[] parts = line.split(",");
+            if (parts.length == 2) {
+                try {
+                    String itemName = parts[0].trim();
+                    int quantity = Integer.parseInt(parts[1].trim());
+                    groceryList.add(new Item(itemName, quantity));
+                } catch (NumberFormatException e) {
+                    System.err.println("Format invalide dans le fichier : " + line);
                 }
-            }
-            if (!itemFound) {
-                System.out.println("Item not found in the list.");
+            } else {
+                System.err.println("Ligne ignorée (mauvais format) : " + line);
             }
         }
-        saveToFile();
-    }
-
-    @Override
-    public List<String> list() {
-        return new ArrayList<>(groceryList);
     }
 }

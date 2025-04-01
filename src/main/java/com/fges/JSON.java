@@ -1,65 +1,40 @@
 package com.fges;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class JSON extends GroceryFile {
+public class JSON {
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    public JSON(String fileName) {
-        super(fileName);
+    public void save(List<Item> groceryList, String fileName) throws IOException {
+        List<String> formattedList = groceryList.stream()
+                .map(item -> item.getName() + ": " + item.quantity)
+                .collect(Collectors.toList());
+
+        OBJECT_MAPPER.writeValue(new File(fileName), formattedList);
     }
 
-    @Override
-    protected void parseFileContents(List<String> fileContents) {
-        // Implement JSON parsing logic here
-        // This is a placeholder - actual implementation would depend on JSON structure
-        groceryList = new ArrayList<>(fileContents);
-    }
+    public void load(List<Item> groceryList, String fileName) throws IOException {
+        groceryList.clear();
 
-    @Override
-    protected void saveToFile() {
-        try {
-            // Implement JSON formatting logic here
-            Files.write(Paths.get(fileName), groceryList);
-        } catch (IOException e) {
-            System.err.println("Error writing to file: " + e.getMessage());
-        }
-    }
-
-    @Override
-    public void add(String itemName, int quantity) {
-        // Implement JSON-specific add logic
-        // This is a simplified implementation
-        boolean itemFound = false;
-        for (int i = 0; i < groceryList.size(); i++) {
-            String currentItem = groceryList.get(i);
-            if (currentItem.contains("\"" + itemName + "\"")) {
-                // Update quantity in JSON
-                // Simplified implementation
-                itemFound = true;
-                break;
+        List<String> loadedList = OBJECT_MAPPER.readValue(
+                new File(fileName),
+                OBJECT_MAPPER.getTypeFactory().constructCollectionType(List.class, String.class)
+        );
+        for (String entry : loadedList) {
+            String[] parts = entry.split(":");
+            if (parts.length == 2) {
+                try {
+                    String name = parts[0].trim();
+                    int quantity = Integer.parseInt(parts[1].trim());
+                    groceryList.add(new Item(name, quantity));
+                } catch (NumberFormatException e) {
+                    System.err.println("Format invalide dans le fichier JSON : " + entry);
+                }
             }
         }
-        if (!itemFound) {
-            // Add new item in JSON format
-            // Simplified implementation
-        }
-        saveToFile();
-    }
-
-    @Override
-    public void remove(String itemName, int quantity) {
-        // Implement JSON-specific remove logic
-        saveToFile();
-    }
-
-    @Override
-    public List<String> list() {
-        // Format list for display
-        return groceryList;
     }
 }
