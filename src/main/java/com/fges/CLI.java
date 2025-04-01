@@ -2,7 +2,6 @@ package com.fges;
 
 import org.apache.commons.cli.*;
 
-
 public class CLI {
     public static void main(String[] args) {
         System.exit(exec(args));
@@ -45,32 +44,32 @@ public class CLI {
     }
 
     private static int handleCommand(GroceryFile groceryFile, String command, String[] args) {
-        return switch (command) {
-            case "add" -> {
+        switch (command) {
+            case "add":
                 if (args.length < 3) {
                     System.err.println("Missing arguments for add command");
-                    yield 1;
+                    return 1;
                 }
                 try {
                     String item = args[1];
                     int quantity = Integer.parseInt(args[2]);
                     groceryFile.add(item, quantity);
-                    yield 0;
+                    return 0;
                 } catch (NumberFormatException e) {
                     System.err.println("Invalid quantity format");
-                    yield 1;
+                    return 1;
                 }
-            }
-            case "list" -> {
+
+            case "list":
                 for (String item : groceryFile.list()) {
                     System.out.println(item);
                 }
-                yield 0;
-            }
-            case "remove" -> {
+                return 0;
+
+            case "remove":
                 if (args.length < 2) {
                     System.err.println("Missing arguments for remove command");
-                    yield 1;
+                    return 1;
                 }
                 String item = args[1];
                 if (args.length >= 3) {
@@ -79,17 +78,16 @@ public class CLI {
                         groceryFile.remove(item, quantity);
                     } catch (NumberFormatException e) {
                         System.err.println("Invalid quantity format");
-                        yield 1;
+                        return 1;
                     }
                 } else {
                     groceryFile.remove(item);
                 }
-                yield 0;
-            }
-            default -> {
+                return 0;
+
+            default:
                 System.err.println("Unknown command: " + command);
-                yield 1;
-            }
-        };
+                return 1;
+        }
     }
 }
