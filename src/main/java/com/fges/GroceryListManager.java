@@ -4,30 +4,33 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fges.dao.GroceryListDAO;
+import com.fges.dao.GroceryListDAOFactory;
+
 public class GroceryListManager {
 
     // Classe pour gérer la liste de course
     protected String fileName;
     protected List<Item> groceryList;
-    protected String fileType;  // Type de fichier (CSV ou JSON)
-    private final JSON jsonManager = new JSON();
-    private final CSV csvManager = new CSV();
+    protected GroceryListDAO dao;
 
     // Constructeur
     public GroceryListManager(String fileName) {
         this.fileName = fileName;
         this.groceryList = new ArrayList<>();
+        this.dao = GroceryListDAOFactory.createDAO(fileName);
+    }
+
+    // Initialize the grocery list manager
+    public void initialize() {
         loadFromFile();
     }
+    
 
     // Charger le fichier
     protected void loadFromFile() {
         try {
-            if (fileName.endsWith(".csv")) {
-                new CSV().load(groceryList, fileName);  // Charge les données CSV
-            } else if (fileName.endsWith(".json")) {
-                new JSON().load(groceryList, fileName);  // Charge les données JSON
-            }
+            dao.load(groceryList);
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
         }
@@ -36,11 +39,7 @@ public class GroceryListManager {
     // Sauvegarde du fichier
     protected void saveToFile() {
         try {
-            if (fileName.endsWith(".csv")) {
-                new CSV().save(groceryList, fileName);  // Sauvegarde CSV
-            } else if (fileName.endsWith(".json")) {
-                new JSON().save(groceryList, fileName);  // Sauvegarde JSON
-            }
+            dao.save(groceryList);
         } catch (IOException e) {
             System.err.println("Error writing to file: " + e.getMessage());
         }
