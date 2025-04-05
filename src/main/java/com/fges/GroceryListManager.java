@@ -15,10 +15,10 @@ public class GroceryListManager {
     protected GroceryListDAO dao;
 
     // Constructeur
-    public GroceryListManager(String fileName) {
+    public GroceryListManager(String fileName, String format) {
         this.fileName = fileName;
         this.groceryList = new ArrayList<>();
-        this.dao = GroceryListDAOFactory.createDAO(fileName);
+        this.dao = GroceryListDAOFactory.createDAO(fileName,format);
     }
 
     // Initialize the grocery list manager

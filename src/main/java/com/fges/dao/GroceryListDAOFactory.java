@@ -1,13 +1,11 @@
 package com.fges.dao;
 
 public class GroceryListDAOFactory {
-    public static GroceryListDAO createDAO(String fileName) {
-        if (fileName.endsWith(".csv")) {
+    public static GroceryListDAO createDAO(String fileName, String format) {
+        if (format.equalsIgnoreCase("csv")) {
             return new CSVGroceryListDAO(fileName);
-        } else if (fileName.endsWith(".json")) {
-            return new JSONGroceryListDAO(fileName);
         } else {
-            throw new IllegalArgumentException("Unsupported file format: " + fileName);
+            return new JSONGroceryListDAO(fileName); // JSON par défaut
         }
     }
 }

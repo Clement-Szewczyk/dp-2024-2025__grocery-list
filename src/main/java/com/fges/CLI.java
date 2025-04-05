@@ -1,33 +1,42 @@
 package com.fges;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 
 public class CLI {
     public void main(String[] args) {
         System.exit(exec(args));
     }
 
+
     public static int exec(String[] args) {
         Options cliOptions = new Options();
         CommandLineParser parser = new DefaultParser();
 
-        cliOptions.addRequiredOption("s", "source", true, "File containing the grocery list");
+        cliOptions.addOption(Option.builder("f")
+                .longOpt("format")
+                .hasArg()
+                .desc("File format (json or csv). Default is json.")
+                .build()
+        );
 
         CommandLine cmd;
         try {
             cmd = parser.parse(cliOptions, args);
+            String format = cmd.getOptionValue("format", "json").toLowerCase();
+            if (!format.equals("json") && !format.equals("csv")) {
+                System.err.println("Unsupported format: " + format);
+                return 1;
+            }
+            String fileName = "liste." + format;
+
         } catch (ParseException ex) {
             System.err.println("Fail to parse arguments: " + ex.getMessage());
             return 1;
         }
+        String format = cmd.getOptionValue("format", "json").toLowerCase();
+        String fileName = "liste." + format;
 
-        String fileName = cmd.getOptionValue("s");
-
-        GroceryListManager groceryManager = new GroceryListManager(fileName);
+        GroceryListManager groceryManager = new GroceryListManager(fileName, format);
 
         String[] positionalArgs = cmd.getArgs();
         if (positionalArgs.length == 0) {
