@@ -1,6 +1,11 @@
 package com.fges;
 
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 public class CLI {
     public void main(String[] args) {
@@ -27,16 +32,16 @@ public class CLI {
                 System.err.println("Unsupported format: " + format);
                 return 1;
             }
-            String fileName = "liste." + format;
 
         } catch (ParseException ex) {
             System.err.println("Fail to parse arguments: " + ex.getMessage());
             return 1;
         }
         String format = cmd.getOptionValue("format", "json").toLowerCase();
-        String fileName = "liste." + format;
+        String fileName = "Grocery." + format;
 
         GroceryListManager groceryManager = new GroceryListManager(fileName, format);
+        groceryManager.initialize();
 
         String[] positionalArgs = cmd.getArgs();
         if (positionalArgs.length == 0) {
