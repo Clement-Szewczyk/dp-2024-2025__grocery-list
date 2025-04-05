@@ -46,7 +46,7 @@ public class GroceryListManager {
     }
 
     // Méthode pour modifier la liste grâce à la commande
-    public int handleCommand(String command, String[] args) {
+    public int handleCommand(String command, String[] args, String category){
         try {
             if (command.equals("list")) {
                 list();
@@ -60,9 +60,9 @@ public class GroceryListManager {
                     case "add" -> {
                         if (args.length >= 3) {
                             int quantity = Integer.parseInt(args[2]);
-                            add(itemName, quantity);
+                            add(itemName, quantity, category);  // Pass the category parameter
                         } else {
-                            add(itemName); // Version sans quantité
+                            add(itemName, 1, category);  // Pass the category parameter
                         }
                     }
                     case "remove" -> {
@@ -90,22 +90,27 @@ public class GroceryListManager {
 
     // Méthode pour ajouter un élément à la liste de course
     public void add(String itemName) {
-        add(itemName, 1);
+        add(itemName, 1, "default");
     }
 
     // Méthode pour ajouter des éléments à la liste de course
-    public void add(String itemName, int quantity) {
+    public void add(String itemName, int quantity, String category) {
         boolean itemFound = false;
         for (Item item : groceryList) {
-            if (item.getName().equalsIgnoreCase(itemName)) {
+            if (item.getName().equalsIgnoreCase(itemName) && 
+                item.getCategory().equalsIgnoreCase(category)) {
                 item.quantity += quantity;
                 itemFound = true;
                 break;
             }
         }
         if (!itemFound) {
-            groceryList.add(new Item(itemName, quantity));
+            groceryList.add(new Item(itemName, quantity, category));
         }
+    }
+
+    public void add(String itemName, int quantity) {
+        add(itemName, quantity, "default");
     }
 
     // Méthode pour supprimer un élément à la liste de course
@@ -133,7 +138,8 @@ public class GroceryListManager {
             System.out.println("La liste est vide.");
         } else {
             for (Item item : groceryList) {
-                System.out.println(item.getName() + " : " + item.quantity);
+                System.out.println(item.getName() + " : " + item.quantity + 
+                                  " [Catégorie: " + item.getCategory() + "]");
             }
         }
     }

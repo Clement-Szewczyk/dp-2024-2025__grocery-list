@@ -23,6 +23,14 @@ public class CLI {
                 .desc("File format (json or csv). Default is json.")
                 .build()
         );
+        
+        // Add category option
+        cliOptions.addOption(Option.builder("c")
+                .longOpt("category")
+                .hasArg()
+                .desc("Item category. Default is 'default'.")
+                .build()
+        );
 
         CommandLine cmd;
         try {
@@ -39,6 +47,9 @@ public class CLI {
         }
         String format = cmd.getOptionValue("format", "json").toLowerCase();
         String fileName = "Grocery." + format;
+        
+        // Get category from command line or use default
+        String category = cmd.getOptionValue("category", "default");
 
         GroceryListManager groceryManager = new GroceryListManager(fileName, format);
         groceryManager.initialize();
@@ -50,6 +61,7 @@ public class CLI {
         }
 
         String command = positionalArgs[0];
-        return groceryManager.handleCommand(command, positionalArgs);
+        // Pass category to handleCommand
+        return groceryManager.handleCommand(command, positionalArgs, category);
     }
 }
