@@ -1,5 +1,4 @@
 package com.fges;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,17 +7,77 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CSVTest {
+    @TempDir
+    Path tempDir;
+
+    private Path tempFile;
+    private CSV csv;
+
+    @BeforeEach
+    void setUp() throws IOException {
+        // Créer un fichier temporaire
+        tempFile = tempDir.resolve("grocery.csv");
+
+        // Initialisation de la liste de courses
+        List<Item> groceryList = new ArrayList<>();
+        groceryList.add(new Item("apple", 5, "Fruits"));
+        groceryList.add(new Item("banana", 3, "Fruits"));
+
+        // Sauvegarder les éléments dans le fichier CSV
+        csv = new CSV();
+        csv.save(groceryList, tempFile.toString());
+    }
+
+    @AfterEach
+    void tearDown() throws IOException {
+        Files.deleteIfExists(tempFile);
+    }
+
     @Test
-    void should_allways_pass() {
+    void should_always_pass() {
         assertThat(true).isTrue();
     }
 
+    @Test
+    void should_load_existing_items_from_file() throws IOException {
+        List<Item> loadedList = new ArrayList<>();
+        csv.load(loadedList, tempFile.toString());
+
+        assertThat(loadedList).hasSize(2);
+        assertThat(loadedList.get(0).getName()).isEqualTo("apple");
+        assertThat(loadedList.get(1).getName()).isEqualTo("banana");
+    }
+
+    @Test
+    void should_save_items_to_file() throws IOException {
+        List<Item> newGroceryList = new ArrayList<>();
+        newGroceryList.add(new Item("orange", 4, "Fruits"));
+
+        csv.save(newGroceryList, tempFile.toString());
+
+        List<Item> loadedList = new ArrayList<>();
+        csv.load(loadedList, tempFile.toString());
+
+        assertThat(loadedList).hasSize(1);
+        assertThat(loadedList.get(0).getName()).isEqualTo("orange");
+        assertThat(loadedList.get(0).getQuantity()).isEqualTo(4);
+    }
+
+    @Test
+    void should_not_load_if_file_does_not_exist() throws IOException {
+        Path nonExistentFile = tempDir.resolve("non_existent_file.csv");
+
+        List<Item> loadedList = new ArrayList<>();
+        csv.load(loadedList, nonExistentFile.toString());
+
+        assertThat(loadedList).isEmpty();
+    }
     /*@TempDir
     Path tempDir;
 

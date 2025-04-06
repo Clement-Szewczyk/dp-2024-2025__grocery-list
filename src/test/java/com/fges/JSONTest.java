@@ -8,6 +8,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -16,9 +17,66 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JSONTest {
+
+    @TempDir
+    Path tempDir;
+
+    private Path tempFile;
+    private JSON json;
+
+    @BeforeEach
+    void setUp() throws IOException {
+        tempFile = tempDir.resolve("grocery.json");
+
+        List <Item> groceryList = new ArrayList<>();
+        groceryList.add(new Item("apple", 5, "Fruits"));
+        groceryList.add(new Item("banana", 3, "Fruits"));
+
+        json = new JSON();
+        json.save(groceryList, tempFile.toString());
+    }
+    @AfterEach
+    void tearDown() throws IOException {
+        Files.deleteIfExists(tempFile);
+    }
+
     @Test
     void should_always_pass() {
         assertThat(true).isTrue();
+    }
+    @Test
+    void should_load_existing_items_from_file() throws IOException {
+        List<Item> loadedList = new ArrayList<>();
+        json.load(loadedList, tempFile.toString());
+
+        assertThat(loadedList).hasSize(2);
+        assertThat(loadedList.get(0).getName()).isEqualTo("apple");
+        assertThat(loadedList.get(1).getName()).isEqualTo("banana");
+    }
+
+    @Test
+    void should_save_items_to_file() throws IOException {
+        List<Item> newGroceryList = new ArrayList<>();
+        newGroceryList.add(new Item("orange", 4, "Fruits"));
+
+        json.save(newGroceryList, tempFile.toString());
+
+        List<Item> loadedList = new ArrayList<>();
+        json.load(loadedList, tempFile.toString());
+
+        assertThat(loadedList).hasSize(1);
+        assertThat(loadedList.get(0).getName()).isEqualTo("orange");
+        assertThat(loadedList.get(0).getQuantity()).isEqualTo(4);
+    }
+
+    @Test
+    void should_not_load_if_file_does_not_exist() throws IOException {
+        Path nonExistentFile = tempDir.resolve("non_existent_file.json");
+
+        List<Item> loadedList = new ArrayList<>();
+        json.load(loadedList, nonExistentFile.toString());
+
+        assertThat(loadedList).isEmpty();
     }
 
     /*@TempDir
