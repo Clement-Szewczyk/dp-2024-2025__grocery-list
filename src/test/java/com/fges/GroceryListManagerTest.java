@@ -2,9 +2,7 @@ package com.fges;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.Path;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -18,7 +16,7 @@ class GroceryListManagerTest {
 
     @BeforeEach
     void setUp() {
-        String fileName = this.tempDir.resolve("testfile.csv").toString();
+        String fileName = this.tempDir.resolve("testFile.csv").toString();
         this.manager = new GroceryListManager(fileName, "csv");
         this.manager.initialize();
     }
@@ -68,7 +66,7 @@ class GroceryListManagerTest {
     @Test
     void should_add_item_to_specific_category() {
         this.manager.add("Pomme", 2, "Fruits");
-        this.manager.add("Carrotte", 3, "Légumes");
+        this.manager.add("Carotte", 3, "Légumes");
         this.manager.list();
         assertThat(this.manager.groceryList).hasSize(2);
         assertThat(this.manager.groceryList.get(0).getCategory()).isEqualTo("Fruits");
@@ -78,12 +76,12 @@ class GroceryListManagerTest {
     @Test
     void should_save_after_modifications() throws IOException {
         this.manager.add("Pomme", 2, "Fruits");
-        this.manager.add("Carrotte", 3, "Légumes");
+        this.manager.add("Carotte", 3, "Légumes");
         this.manager.saveToFile();
-        Path testFile = this.tempDir.resolve("testfile.csv");
+        Path testFile = this.tempDir.resolve("testFile.csv");
         assertThat(Files.exists(testFile)).isTrue();
         String content = new String(Files.readAllBytes(testFile));
         assertThat(content).contains("Pomme,2,Fruits");
-        assertThat(content).contains("Carrotte,3,Légumes");
+        assertThat(content).contains("Carotte,3,Légumes");
     }
 }
