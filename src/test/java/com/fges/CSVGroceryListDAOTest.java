@@ -1,5 +1,5 @@
 /*
-package com.fges.dao;
+package com.fges;
 
 
 import com.fges.Item;
@@ -64,4 +64,4 @@ class CSVGroceryListDAOTest {
     }
 }
 
- */
+*/
