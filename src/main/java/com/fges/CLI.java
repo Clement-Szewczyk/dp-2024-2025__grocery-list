@@ -1,17 +1,12 @@
 package com.fges;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
+import com.fges.dao.GroceryListDAOFactory;
 
 public class CLI {
     public void main(String[] args) {
         System.exit(exec(args));
     }
-
 
     public static int exec(String[] args) {
         Options cliOptions = new Options();
@@ -23,8 +18,7 @@ public class CLI {
                 .desc("File format (json or csv). Default is json.")
                 .build()
         );
-        
-        // Add category option
+
         cliOptions.addOption(Option.builder("c")
                 .longOpt("category")
                 .hasArg()
@@ -41,27 +35,32 @@ public class CLI {
                 return 1;
             }
 
+            String fileName = "Grocery." + format;
+            String category = cmd.getOptionValue("category", "default");
+
+            // Create the DAO
+            var dao = GroceryListDAOFactory.createDAO(fileName, format);
+
+            // Create and initialize the manager
+            var manager = new GroceryListManager(dao);
+            manager.initialize();
+
+            // Create command handler
+            var commandHandler = new CommandHandler(manager);
+
+            String[] positionalArgs = cmd.getArgs();
+            if (positionalArgs.length == 0) {
+                System.err.println("Missing Command");
+                return 1;
+            }
+
+            String command = positionalArgs[0];
+            // Use the command handler instead of the manager
+            return commandHandler.handleCommand(command, positionalArgs, category);
+
         } catch (ParseException ex) {
             System.err.println("Fail to parse arguments: " + ex.getMessage());
             return 1;
         }
-        String format = cmd.getOptionValue("format", "json").toLowerCase();
-        String fileName = "Grocery." + format;
-        
-        // Get category from command line or use default
-        String category = cmd.getOptionValue("category", "default");
-
-        GroceryListManager groceryManager = new GroceryListManager(fileName, format);
-        groceryManager.initialize();
-
-        String[] positionalArgs = cmd.getArgs();
-        if (positionalArgs.length == 0) {
-            System.err.println("Missing Command");
-            return 1;
-        }
-
-        String command = positionalArgs[0];
-        // Pass category to handleCommand
-        return groceryManager.handleCommand(command, positionalArgs, category);
     }
 }
