@@ -1,1 +1,1 @@
-{"toto":["Toto 5","yy 10"],"default":["Toto 5","pomme 6","Banana 6"],"human":["Carlos 10"],"Fruits":["Banana 6"]}
+[{"quantity":6,"name":"pomme","category":"default"},{"quantity":2,"name":"pomme2","category":"default"}]

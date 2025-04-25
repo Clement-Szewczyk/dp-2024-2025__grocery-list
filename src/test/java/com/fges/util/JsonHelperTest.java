@@ -19,26 +19,48 @@ class JsonHelperTest {
     Path tempDir;
 
     @Test
-    void saveToFile_should_save_categorized_items() throws IOException {
-        // Given
+    void saveToFile_should_save_multiple_items_in_array_format() throws IOException {
+        // Given - multiple items
         List<Item> groceryList = Arrays.asList(
                 new Item("Apple", 5, "Fruits"),
                 new Item("Banana", 3, "Fruits"),
                 new Item("Milk", 1, "Dairy")
         );
 
-        File tempFile = tempDir.resolve("test.json").toFile();
+        File tempFile = tempDir.resolve("test_multiple.json").toFile();
 
         // When
         JsonHelper.saveToFile(groceryList, tempFile.getAbsolutePath());
 
         // Then
         String content = Files.readString(tempFile.toPath());
-        assertThat(content).contains("Fruits");
-        assertThat(content).contains("Dairy");
-        assertThat(content).contains("Apple 5");
-        assertThat(content).contains("Banana 3");
-        assertThat(content).contains("Milk 1");
+        assertThat(content).startsWith("["); // Should be an array
+        assertThat(content).endsWith("]");
+        assertThat(content).contains("\"name\":\"Apple\"");
+        assertThat(content).contains("\"category\":\"Fruits\"");
+        assertThat(content).contains("\"quantity\":5");
+        assertThat(content).contains("\"name\":\"Banana\"");
+        assertThat(content).contains("\"name\":\"Milk\"");
+        assertThat(content).contains("\"category\":\"Dairy\"");
+    }
+
+    @Test
+    void saveToFile_should_save_single_item_without_array() throws IOException {
+        // Given - single item
+        List<Item> groceryList = List.of(new Item("pomme", 2, "default"));
+
+        File tempFile = tempDir.resolve("test_single.json").toFile();
+
+        // When
+        JsonHelper.saveToFile(groceryList, tempFile.getAbsolutePath());
+
+        // Then
+        String content = Files.readString(tempFile.toPath());
+        assertThat(content).doesNotStartWith("["); // Should NOT be wrapped in array
+        assertThat(content).doesNotEndWith("]");
+        assertThat(content).contains("\"name\":\"pomme\"");
+        assertThat(content).contains("\"quantity\":2");
+        assertThat(content).contains("\"category\":\"default\"");
     }
 
     @Test
@@ -65,10 +87,28 @@ class JsonHelperTest {
     }
 
     @Test
-    void loadFromFile_should_load_object_format() throws IOException {
-        // Given
+    void loadFromFile_should_load_array_object_format() throws IOException {
+        // Given - array format
         String jsonContent = "[{\"name\":\"Apple\",\"quantity\":5,\"category\":\"Fruits\"}]";
-        File tempFile = tempDir.resolve("test.json").toFile();
+        File tempFile = tempDir.resolve("test_array.json").toFile();
+        Files.writeString(tempFile.toPath(), jsonContent);
+
+        // When
+        List<Item> result = JsonHelper.loadFromFile(tempFile.getAbsolutePath());
+
+        // Then
+        assertThat(result).hasSize(1);
+        Item item = result.get(0);
+        assertThat(item.getName()).isEqualTo("Apple");
+        assertThat(item.getQuantity()).isEqualTo(5);
+        assertThat(item.getCategory()).isEqualTo("Fruits");
+    }
+
+    @Test
+    void loadFromFile_should_load_single_object_format() throws IOException {
+        // Given - single object format without array wrapper
+        String jsonContent = "{\"name\":\"Apple\",\"quantity\":5,\"category\":\"Fruits\"}";
+        File tempFile = tempDir.resolve("test_single.json").toFile();
         Files.writeString(tempFile.toPath(), jsonContent);
 
         // When

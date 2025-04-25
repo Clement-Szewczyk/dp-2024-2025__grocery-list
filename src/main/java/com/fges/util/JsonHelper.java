@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fges.Item;
@@ -14,9 +15,26 @@ public class JsonHelper {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     public static void saveToFile(List<Item> groceryList, String fileName) throws IOException {
-        // Conversion en structure par catégorie
-        Map<String, List<String>> categorizedItems = categorizeItems(groceryList);
-        MAPPER.writeValue(new File(fileName), categorizedItems);
+        if (groceryList.size() == 1) {
+            // Sauvegarder un seul objet sans tableau
+            Item item = groceryList.get(0);
+            Map<String, Object> itemMap = new HashMap<>();
+            itemMap.put("name", item.getName());
+            itemMap.put("category", item.getCategory());
+            itemMap.put("quantity", item.getQuantity());
+            MAPPER.writeValue(new File(fileName), itemMap);
+        } else {
+            // Code pour plusieurs éléments
+            List<Map<String, Object>> itemsToSave = new ArrayList<>();
+            for (Item item : groceryList) {
+                Map<String, Object> itemMap = new HashMap<>();
+                itemMap.put("name", item.getName());
+                itemMap.put("category", item.getCategory());
+                itemMap.put("quantity", item.getQuantity());
+                itemsToSave.add(itemMap);
+            }
+            MAPPER.writeValue(new File(fileName), itemsToSave);
+        }
     }
 
     private static Map<String, List<String>> categorizeItems(List<Item> groceryList) {
@@ -70,18 +88,25 @@ public class JsonHelper {
 
     private static boolean tryLoadObjectFormat(File file, List<Item> groceryList) {
         try {
-            List<Map<String, Object>> loadedItems = MAPPER.readValue(
-                    file, new TypeReference<>() {});
+            // Try loading as array first
+            try {
+                List<Map<String, Object>> loadedItems = MAPPER.readValue(
+                        file, new TypeReference<>() {});
 
-            for (Map<String, Object> itemMap : loadedItems) {
-                parseItemMap(itemMap, groceryList);
+                for (Map<String, Object> itemMap : loadedItems) {
+                    parseItemMap(itemMap, groceryList);
+                }
+                return true;
+            } catch (Exception arrayParseError) {
+                // If not array, try single object
+                Map<String, Object> singleItem = MAPPER.readValue(file, new TypeReference<Map<String, Object>>() {});
+                parseItemMap(singleItem, groceryList);
+                return true;
             }
-            return true;
         } catch (Exception e) {
             return false;
         }
     }
-
     private static boolean tryLoadSimpleFormat(File file, List<Item> groceryList) {
         try {
             List<String> loadedList = MAPPER.readValue(
