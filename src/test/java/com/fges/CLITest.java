@@ -105,6 +105,26 @@ class CLITest {
     }
 
     @Test
+    void should_display_system_info() {
+        String[] args = {"info"};
+
+        int result = CLI.exec(args);
+
+        assertThat(result).isEqualTo(0);
+        String output = outContent.toString();
+        assertThat(output).contains("Today's date");
+        assertThat(output).contains("Operating System");
+        assertThat(output).contains("Java version");
+    }
+
+    @Test
+    void should_contain_source_option() {
+        String[] args = {"-s", "Grocery.json"};
+        int result = CLI.exec(args);
+        assertThat(result).isEqualTo(0);
+    }
+
+    @Test
     void exec_should_remove_item() throws IOException {
         // Given
         // First add items
