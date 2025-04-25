@@ -36,6 +36,8 @@ public class CLI {
         Options cliOptions = new Options();
         CommandLineParser parser = new DefaultParser();
 
+        cliOptions.addRequiredOption("s", "source", true, "File containing the grocery list");
+
         // Define the format option (-f, --format)
         cliOptions.addOption(Option.builder("f")
                 .longOpt("format")
@@ -67,7 +69,7 @@ public class CLI {
             }
 
             // Construct the filename based on the format
-            String fileName = "Grocery." + format;
+            String fileName = cmd.getOptionValue("source");
 
             // Get the category option value, defaulting to "default" if not specified
             String category = cmd.getOptionValue("category", "default");
