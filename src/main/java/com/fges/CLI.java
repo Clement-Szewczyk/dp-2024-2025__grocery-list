@@ -3,6 +3,9 @@ package com.fges;
 import org.apache.commons.cli.*;
 import com.fges.dao.GroceryListDAOFactory;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 /**
  * Command Line Interface handler class for the grocery list application.
  * This class processes command line arguments and delegates operations to appropriate handlers.
@@ -32,6 +35,21 @@ public class CLI {
      */
 
     public static int exec(String[] args) {
+
+        // Manage the case where the user wants to display the system information
+        if (args[0].equalsIgnoreCase("info")) {
+
+            // Display system information and date
+            String osName = System.getProperty("os.name");
+            String javaVersion = System.getProperty("java.version");
+            LocalDate today = LocalDate.now();
+            String todayDate = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            System.out.println("Today's date : " + todayDate);
+            System.out.println("Operating System : " + osName);
+            System.out.println("Java version : " + javaVersion);
+            return 0;
+        }
+
         // Initialize command line options
         Options cliOptions = new Options();
         CommandLineParser parser = new DefaultParser();
