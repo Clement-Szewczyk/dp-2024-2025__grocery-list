@@ -11,12 +11,42 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fges.Item;
 
+/**
+ * Utility class for handling JSON-based input/output operations related to grocery list items.
+ *
+ * Supports multiple JSON formats:
+ *
+ * Single item as an object
+ * Multiple items as an array of objects
+ * Simple list format (e.g., "Milk:2")
+ * Categorized map format (e.g., {"Fruits": ["Apple 2", "Banana 3"]})
+ *
+ * This class centralizes all JSON reading/writing logic to keep the DAO layer clean.
+ *
+ * Uses the Jackson library for parsing and writing JSON files.
+ *
+ * @author Szewczyk Clément,
+ *         Stievenard Emma,
+ *         Laurency Yuna
+ */
 public class JsonHelper {
+
+    /**
+     * Shared Jackson object mapper instance.
+     */
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    /**
+     * Saves the given grocery list to a JSON file.
+     * If the list contains only one item, it is stored as a single JSON object.
+     * Otherwise, the list is saved as an array of objects.
+     *
+     * @param groceryList the list of items to be saved
+     * @param fileName the file path where to save the data
+     * @throws IOException if an error occurs during writing
+     */
     public static void saveToFile(List<Item> groceryList, String fileName) throws IOException {
         if (groceryList.size() == 1) {
-            // Sauvegarder un seul objet sans tableau
             Item item = groceryList.get(0);
             Map<String, Object> itemMap = new HashMap<>();
             itemMap.put("name", item.getName());
@@ -24,7 +54,6 @@ public class JsonHelper {
             itemMap.put("quantity", item.getQuantity());
             MAPPER.writeValue(new File(fileName), itemMap);
         } else {
-            // Code pour plusieurs éléments
             List<Map<String, Object>> itemsToSave = new ArrayList<>();
             for (Item item : groceryList) {
                 Map<String, Object> itemMap = new HashMap<>();
@@ -37,20 +66,14 @@ public class JsonHelper {
         }
     }
 
-    private static Map<String, List<String>> categorizeItems(List<Item> groceryList) {
-        Map<String, List<String>> categorizedItems = new HashMap<>();
-
-        for (Item item : groceryList) {
-            String category = item.getCategory();
-            String itemWithQuantity = item.getName() + " " + item.quantity;
-
-            categorizedItems.computeIfAbsent(category, k -> new ArrayList<>())
-                    .add(itemWithQuantity);
-        }
-
-        return categorizedItems;
-    }
-
+    /**
+     * Loads a grocery list from a JSON file.
+     * Tries multiple formats and returns the corresponding list of items.
+     *
+     * @param fileName the file path to load data from
+     * @return a list of items parsed from the file
+     * @throws IOException if the file is unreadable or unsupported format
+     */
     public static List<Item> loadFromFile(String fileName) throws IOException {
         List<Item> groceryList = new ArrayList<>();
         File file = new File(fileName);
@@ -59,7 +82,6 @@ public class JsonHelper {
             return groceryList;
         }
 
-        // Essayer chaque format séquentiellement
         if (!tryLoadCategorizedFormat(file, groceryList) &&
                 !tryLoadObjectFormat(file, groceryList) &&
                 !tryLoadSimpleFormat(file, groceryList)) {
@@ -69,6 +91,9 @@ public class JsonHelper {
         return groceryList;
     }
 
+    /**
+     * Attempts to load items from a categorized format: Map<Category, List<ItemName + Quantity>>.
+     */
     private static boolean tryLoadCategorizedFormat(File file, List<Item> groceryList) {
         try {
             Map<String, List<String>> categorizedItems = MAPPER.readValue(
@@ -86,9 +111,14 @@ public class JsonHelper {
         }
     }
 
+    /**
+     * Attempts to load items from a format that is either:
+     * - a list of maps (array of objects)
+     * - a single map (single object)
+     */
     private static boolean tryLoadObjectFormat(File file, List<Item> groceryList) {
         try {
-            // Try loading as array first
+            // Try array of items
             try {
                 List<Map<String, Object>> loadedItems = MAPPER.readValue(
                         file, new TypeReference<>() {});
@@ -98,8 +128,8 @@ public class JsonHelper {
                 }
                 return true;
             } catch (Exception arrayParseError) {
-                // If not array, try single object
-                Map<String, Object> singleItem = MAPPER.readValue(file, new TypeReference<Map<String, Object>>() {});
+                // Fallback to single object
+                Map<String, Object> singleItem = MAPPER.readValue(file, new TypeReference<>() {});
                 parseItemMap(singleItem, groceryList);
                 return true;
             }
@@ -107,6 +137,10 @@ public class JsonHelper {
             return false;
         }
     }
+
+    /**
+     * Attempts to load items from a simplified format: List<String> with entries like "Milk:2".
+     */
     private static boolean tryLoadSimpleFormat(File file, List<Item> groceryList) {
         try {
             List<String> loadedList = MAPPER.readValue(
@@ -121,7 +155,9 @@ public class JsonHelper {
         }
     }
 
-    // Méthodes helpers pour le parsing
+    /**
+     * Parses an entry in the format "name quantity" and adds it to the list.
+     */
     private static void parseItemString(String itemString, String category, List<Item> groceryList) {
         try {
             int lastSpaceIndex = itemString.lastIndexOf(" ");
@@ -135,6 +171,9 @@ public class JsonHelper {
         }
     }
 
+    /**
+     * Parses a JSON object as a map and adds it to the list.
+     */
     private static void parseItemMap(Map<String, Object> itemMap, List<Item> groceryList) {
         try {
             String itemName = (String) itemMap.get("name");
@@ -156,6 +195,9 @@ public class JsonHelper {
         }
     }
 
+    /**
+     * Parses a simplified entry like "Bread:1" and adds it to the list.
+     */
     private static void parseSimpleEntry(String entry, List<Item> groceryList) {
         try {
             String[] parts = entry.split(":");
@@ -167,5 +209,23 @@ public class JsonHelper {
         } catch (NumberFormatException exc) {
             System.err.println("Format invalide: " + entry);
         }
+    }
+
+    /**
+     * Internal utility used only by saveToFile to group items by category.
+     * (Currently unused externally.)
+     */
+    private static Map<String, List<String>> categorizeItems(List<Item> groceryList) {
+        Map<String, List<String>> categorizedItems = new HashMap<>();
+
+        for (Item item : groceryList) {
+            String category = item.getCategory();
+            String itemWithQuantity = item.getName() + " " + item.quantity;
+
+            categorizedItems.computeIfAbsent(category, k -> new ArrayList<>())
+                    .add(itemWithQuantity);
+        }
+
+        return categorizedItems;
     }
 }
