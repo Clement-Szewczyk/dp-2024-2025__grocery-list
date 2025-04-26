@@ -1,4 +1,4 @@
-# Rapport n°3 sur le Projet "Grocery List"
+git # Rapport n°3 sur le Projet "Grocery List"
 
 ## Design Patterns Utilisés
 
@@ -8,11 +8,6 @@ Le **Strategy Pattern** a été mis en place pour gérer les différents formats
 ### 2. Factory Pattern
 Le **Factory Pattern** a été utilisé pour centraliser la création des instances de DAO en fonction du format choisi par l'utilisateur. Cette approche permet de déléguer la logique de création à une classe dédiée, simplifiant ainsi le code client et respectant le principe de responsabilité unique.
 
-### 3. Singleton Pattern
-Le **Singleton Pattern** a été appliqué pour la gestion de certaines ressources partagées, comme la configuration ou les instances critiques du programme. Cela garantit qu'une seule instance de ces ressources est créée et utilisée tout au long de l'exécution du programme.
-
-### 4. Command Pattern
-Le **Command Pattern** a été utilisé pour structurer les différentes commandes de la CLI (par exemple, `add`, `list`, etc.). Chaque commande est encapsulée dans une classe dédiée, ce qui permet une gestion claire et extensible des fonctionnalités de la CLI.
 
 ## Avantages des Patterns Implémentés
 - **Modularité** : Les patterns utilisés permettent de découpler les différentes parties du code, rendant le projet plus maintenable.
