@@ -7,7 +7,7 @@ package com.fges;
  *
  * @author Szewczyk Clément, Stievenard Emma, Laurency Yuna
  */
-public class Item {
+public class GroceryItem {
     /**
      * The name of the grocery item
      */
@@ -24,13 +24,13 @@ public class Item {
     private String category;
 
     /**
-     * Constructs a new Item with the specified name, quantity, and category.
+     * Constructs a new GroceryItem with the specified name, quantity, and category.
      *
      * @param name The name of the grocery item
      * @param quantity The quantity of the grocery item
      * @param category The category of the grocery item
      */
-    public Item(String name, int quantity, String category) {
+    public GroceryItem(String name, int quantity, String category) {
         this.name = name;
         this.quantity = quantity;
         this.category = category;

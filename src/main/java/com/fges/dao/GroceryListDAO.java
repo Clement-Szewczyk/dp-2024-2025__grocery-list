@@ -3,7 +3,7 @@ package com.fges.dao;
 import java.io.IOException;
 import java.util.List;
 
-import com.fges.Item;
+import com.fges.GroceryItem;
 
 /**
  * Data Access Object (DAO) interface for grocery list operations.
@@ -24,7 +24,7 @@ public interface GroceryListDAO {
      * @param groceryList The list to be populated with loaded items
      * @throws IOException If an I/O error occurs during the loading process
      */
-    void load(List<Item> groceryList) throws IOException;
+    void load(List<GroceryItem> groceryList) throws IOException;
 
     /**
      * Saves the provided list of grocery items to persistent storage.
@@ -33,5 +33,5 @@ public interface GroceryListDAO {
      * @param groceryList The list of items to be saved
      * @throws IOException If an I/O error occurs during the saving process
      */
-    void save(List<Item> groceryList) throws IOException;
+    void save(List<GroceryItem> groceryList) throws IOException;
 }

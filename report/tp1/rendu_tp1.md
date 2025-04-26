@@ -24,8 +24,8 @@ Deux classes distinctes (`CSV` et `JSON`) permettent de stocker et manipuler les
 
 Une interface en ligne de commande (`CLIHandler`) a été développée à l'aide d'`Apache Commons CLI` pour interpréter les commandes :
 
-- `add <item> <quantity>` : ajoute un élément à la liste.
-- `remove <item> [quantity]` : supprime un élément (ou réduit sa quantité).
+- `add <groceryItem> <quantity>` : ajoute un élément à la liste.
+- `remove <groceryItem> [quantity]` : supprime un élément (ou réduit sa quantité).
 - `list` : affiche la liste complète.
 
 Le programme détecte automatiquement le type de fichier utilisé (.csv ou .json) et utilise la classe correspondante.

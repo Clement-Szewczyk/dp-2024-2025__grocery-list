@@ -22,7 +22,7 @@ public class GroceryListManager {
     /**
      * The list of grocery items managed by this class
      */
-    private List<Item> groceryList;
+    private List<GroceryItem> groceryList;
 
     /**
      * Constructs a GroceryListManager with the specified DAO.
@@ -77,18 +77,18 @@ public class GroceryListManager {
     public void add(String itemName, int quantity, String category) {
         boolean itemFound = false;
         // Check if the item already exists in the list
-        for (Item item : groceryList) {
-            if (item.getName().equalsIgnoreCase(itemName) &&
-                    item.getCategory().equalsIgnoreCase(category)) {
+        for (GroceryItem groceryItem : groceryList) {
+            if (groceryItem.getName().equalsIgnoreCase(itemName) &&
+                    groceryItem.getCategory().equalsIgnoreCase(category)) {
                 // If found, increase its quantity
-                item.quantity += quantity;
+                groceryItem.quantity += quantity;
                 itemFound = true;
                 break;
             }
         }
         // If not found, add as a new item
         if (!itemFound) {
-            groceryList.add(new Item(itemName, quantity, category));
+            groceryList.add(new GroceryItem(itemName, quantity, category));
         }
     }
 
@@ -155,9 +155,9 @@ public class GroceryListManager {
         if (groceryList.isEmpty()) {
             System.out.println("La liste est vide.");
         } else {
-            for (Item item : groceryList) {
-                System.out.println(item.getName() + " : " + item.quantity +
-                        " [Catégorie: " + item.getCategory() + "]");
+            for (GroceryItem groceryItem : groceryList) {
+                System.out.println(groceryItem.getName() + " : " + groceryItem.quantity +
+                        " [Catégorie: " + groceryItem.getCategory() + "]");
             }
         }
     }
@@ -165,9 +165,9 @@ public class GroceryListManager {
     /**
      * Returns the current grocery list.
      *
-     * @return The list of Item objects
+     * @return The list of GroceryItem objects
      */
-    public List<Item> getGroceryList() {
+    public List<GroceryItem> getGroceryList() {
         return groceryList;
     }
 }

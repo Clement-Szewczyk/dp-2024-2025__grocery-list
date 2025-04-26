@@ -3,7 +3,7 @@ package com.fges.dao;
 import java.io.IOException;
 import java.util.List;
 
-import com.fges.Item;
+import com.fges.GroceryItem;
 import com.fges.util.JsonHelper;
 
 /**
@@ -39,10 +39,10 @@ public class JSONGroceryListDAO implements GroceryListDAO {
      * @throws IOException If an I/O error occurs during the file reading process
      */
     @Override
-    public void load(List<Item> groceryList) throws IOException {
-        List<Item> loadedItems = JsonHelper.loadFromFile(fileName);
+    public void load(List<GroceryItem> groceryList) throws IOException {
+        List<GroceryItem> loadedGroceryItems = JsonHelper.loadFromFile(fileName);
         groceryList.clear();
-        groceryList.addAll(loadedItems);
+        groceryList.addAll(loadedGroceryItems);
     }
 
     /**
@@ -53,7 +53,7 @@ public class JSONGroceryListDAO implements GroceryListDAO {
      * @throws IOException If an I/O error occurs during the file writing process
      */
     @Override
-    public void save(List<Item> groceryList) throws IOException {
+    public void save(List<GroceryItem> groceryList) throws IOException {
         JsonHelper.saveToFile(groceryList, fileName);
     }
 }

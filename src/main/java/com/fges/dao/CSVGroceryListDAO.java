@@ -3,7 +3,7 @@ package com.fges.dao;
 import java.io.IOException;
 import java.util.List;
 
-import com.fges.Item;
+import com.fges.GroceryItem;
 import com.fges.util.CsvHelper;
 
 /**
@@ -47,10 +47,10 @@ public class CSVGroceryListDAO implements GroceryListDAO {
      * @throws IOException If an I/O error occurs while reading the file
      */
     @Override
-    public void load(List<Item> groceryList) throws IOException {
-        List<Item> loadedItems = CsvHelper.loadFromFile(fileName);
+    public void load(List<GroceryItem> groceryList) throws IOException {
+        List<GroceryItem> loadedGroceryItems = CsvHelper.loadFromFile(fileName);
         groceryList.clear();
-        groceryList.addAll(loadedItems);
+        groceryList.addAll(loadedGroceryItems);
     }
 
     /**
@@ -62,7 +62,7 @@ public class CSVGroceryListDAO implements GroceryListDAO {
      * @throws IOException If an I/O error occurs while writing the file
      */
     @Override
-    public void save(List<Item> groceryList) throws IOException {
+    public void save(List<GroceryItem> groceryList) throws IOException {
         CsvHelper.saveToFile(groceryList, fileName);
     }
 }

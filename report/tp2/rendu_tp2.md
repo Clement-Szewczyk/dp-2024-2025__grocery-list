@@ -52,11 +52,11 @@ Ce comportement est centralisé dans la classe GroceryListManager.
 
 ### 2. Gestion des catégories
 
-Nous avons ajouté la possibilité de catégoriser les items dans la liste de courses. Chaque item peut maintenant être associé à une catégorie, ce qui facilite l'organisation et la recherche des produits.
+Nous avons ajouté la possibilité de catégoriser les items dans la liste de courses. Chaque groceryItem peut maintenant être associé à une catégorie, ce qui facilite l'organisation et la recherche des produits.
 
 #### Fonctionnement
 
-L'utilisateur peut spécifier une catégorie lors de l'ajout d'un item. Par exemple :
+L'utilisateur peut spécifier une catégorie lors de l'ajout d'un groceryItem. Par exemple :
 
 ```bash
 java -jar target/dp-2024-2025__grocery-list-1.0-SNAPSHOT.jar -c fruits add pomme 2
@@ -64,7 +64,7 @@ java -jar target/dp-2024-2025__grocery-list-1.0-SNAPSHOT.jar -c fruits add pomme
 
 #### Implémentation
 
-Nous avons modifié la classe `GroceryItem` pour inclure un champ `category`. Lors de l'ajout d'un item, la catégorie est récupérée et stockée avec l'item.
+Nous avons modifié la classe `GroceryItem` pour inclure un champ `category`. Lors de l'ajout d'un groceryItem, la catégorie est récupérée et stockée avec l'groceryItem.
 
 Nous avons également mis à jour la méthode `list()` pour afficher les items avec leur catégorie.
 

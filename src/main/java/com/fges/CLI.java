@@ -68,7 +68,7 @@ public class CLI {
         cliOptions.addOption(Option.builder("c")
                 .longOpt("category")
                 .hasArg()
-                .desc("Item category. Default is 'default'.")
+                .desc("GroceryItem category. Default is 'default'.")
                 .build()
         );
 

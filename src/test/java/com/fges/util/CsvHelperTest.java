@@ -1,6 +1,6 @@
 package com.fges.util;
 
-import com.fges.Item;
+import com.fges.GroceryItem;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -20,9 +20,9 @@ class CsvHelperTest {
     @Test
     void saveToFile_should_create_file_with_header_and_data() throws IOException {
         // Given
-        List<Item> groceryList = Arrays.asList(
-                new Item("Apple", 5, "Fruits"),
-                new Item("Milk", 1, "Dairy")
+        List<GroceryItem> groceryList = Arrays.asList(
+                new GroceryItem("Apple", 5, "Fruits"),
+                new GroceryItem("Milk", 1, "Dairy")
         );
 
         Path tempFile = tempDir.resolve("test.csv");
@@ -34,7 +34,7 @@ class CsvHelperTest {
         List<String> lines = Files.readAllLines(tempFile);
 
         // Check header
-        assertThat(lines.get(0)).isEqualTo("Item,Quantité,Catégorie");
+        assertThat(lines.get(0)).isEqualTo("GroceryItem,Quantité,Catégorie");
 
         // Check data rows
         assertThat(lines).contains("Apple,5,Fruits");
@@ -44,22 +44,22 @@ class CsvHelperTest {
     @Test
     void loadFromFile_should_read_header_and_data() throws IOException {
         // Given
-        String csvContent = "Item,Quantité,Catégorie\nApple,5,Fruits\nMilk,1,Dairy";
+        String csvContent = "GroceryItem,Quantité,Catégorie\nApple,5,Fruits\nMilk,1,Dairy";
         Path tempFile = tempDir.resolve("test.csv");
         Files.writeString(tempFile, csvContent);
 
         // When
-        List<Item> result = CsvHelper.loadFromFile(tempFile.toString());
+        List<GroceryItem> result = CsvHelper.loadFromFile(tempFile.toString());
 
         // Then
         assertThat(result).hasSize(2);
 
-        Item apple = result.stream().filter(i -> i.getName().equals("Apple")).findFirst().orElse(null);
+        GroceryItem apple = result.stream().filter(i -> i.getName().equals("Apple")).findFirst().orElse(null);
         assertThat(apple).isNotNull();
         assertThat(apple.getQuantity()).isEqualTo(5);
         assertThat(apple.getCategory()).isEqualTo("Fruits");
 
-        Item milk = result.stream().filter(i -> i.getName().equals("Milk")).findFirst().orElse(null);
+        GroceryItem milk = result.stream().filter(i -> i.getName().equals("Milk")).findFirst().orElse(null);
         assertThat(milk).isNotNull();
         assertThat(milk.getQuantity()).isEqualTo(1);
         assertThat(milk.getCategory()).isEqualTo("Dairy");
@@ -68,35 +68,35 @@ class CsvHelperTest {
     @Test
     void loadFromFile_should_handle_missing_category() throws IOException {
         // Given
-        String csvContent = "Item,Quantité\nApple,5";
+        String csvContent = "GroceryItem,Quantité\nApple,5";
         Path tempFile = tempDir.resolve("test.csv");
         Files.writeString(tempFile, csvContent);
 
         // When
-        List<Item> result = CsvHelper.loadFromFile(tempFile.toString());
+        List<GroceryItem> result = CsvHelper.loadFromFile(tempFile.toString());
 
         // Then
         assertThat(result).hasSize(1);
-        Item item = result.get(0);
-        assertThat(item.getName()).isEqualTo("Apple");
-        assertThat(item.getQuantity()).isEqualTo(5);
-        assertThat(item.getCategory()).isEqualTo("default"); // Default category when not specified
+        GroceryItem groceryItem = result.get(0);
+        assertThat(groceryItem.getName()).isEqualTo("Apple");
+        assertThat(groceryItem.getQuantity()).isEqualTo(5);
+        assertThat(groceryItem.getCategory()).isEqualTo("default"); // Default category when not specified
     }
 
     @Test
     void loadFromFile_should_ignore_invalid_lines() throws IOException {
         // Given
-        String csvContent = "Item,Quantité,Catégorie\nApple,notANumber,Fruits\nBanana,3,Fruits";
+        String csvContent = "GroceryItem,Quantité,Catégorie\nApple,notANumber,Fruits\nBanana,3,Fruits";
         Path tempFile = tempDir.resolve("test.csv");
         Files.writeString(tempFile, csvContent);
 
         // When
-        List<Item> result = CsvHelper.loadFromFile(tempFile.toString());
+        List<GroceryItem> result = CsvHelper.loadFromFile(tempFile.toString());
 
         // Then
         assertThat(result).hasSize(1);
-        Item item = result.get(0);
-        assertThat(item.getName()).isEqualTo("Banana");
+        GroceryItem groceryItem = result.get(0);
+        assertThat(groceryItem.getName()).isEqualTo("Banana");
     }
 
     @Test
@@ -105,7 +105,7 @@ class CsvHelperTest {
         String nonExistentPath = tempDir.resolve("nonexistent.csv").toString();
 
         // When
-        List<Item> result = CsvHelper.loadFromFile(nonExistentPath);
+        List<GroceryItem> result = CsvHelper.loadFromFile(nonExistentPath);
 
         // Then
         assertThat(result).isEmpty();

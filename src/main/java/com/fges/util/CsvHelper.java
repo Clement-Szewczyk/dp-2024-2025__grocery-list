@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.fges.Item;
+import com.fges.GroceryItem;
 
 /**
  * Utility class for handling CSV input/output operations related to grocery items.
@@ -16,11 +16,11 @@ import com.fges.Item;
  *
  * The expected format of the CSV file is:
  *
- * Item,Quantité,Catégorie
+ * GroceryItem,Quantité,Catégorie
  *
  * The first line is assumed to be a header and is skipped during loading.
  *
- * This class assumes that items are stored and read as {@link Item} objects,
+ * This class assumes that items are stored and read as {@link GroceryItem} objects,
  * and includes basic error handling for malformed lines or number conversion issues.
  *
  * @author Szewczyk Clément,
@@ -29,7 +29,7 @@ import com.fges.Item;
  */
 public class CsvHelper {
 
-    private static final String HEADER = "Item,Quantité,Catégorie";
+    private static final String HEADER = "GroceryItem,Quantité,Catégorie";
 
     /**
      * Loads grocery items from the specified CSV file.
@@ -39,11 +39,11 @@ public class CsvHelper {
      * {@code itemName,quantity,category}
      *
      * @param fileName The path to the CSV file
-     * @return A list of {@link Item} objects loaded from the file
+     * @return A list of {@link GroceryItem} objects loaded from the file
      * @throws IOException If an I/O error occurs while reading the file
      */
-    public static List<Item> loadFromFile(String fileName) throws IOException {
-        List<Item> groceryList = new ArrayList<>();
+    public static List<GroceryItem> loadFromFile(String fileName) throws IOException {
+        List<GroceryItem> groceryList = new ArrayList<>();
 
         if (!Files.exists(Paths.get(fileName))) {
             return groceryList;
@@ -73,11 +73,11 @@ public class CsvHelper {
      * followed by one line per item formatted as:
      * {@code itemName,quantity,category}
      *
-     * @param groceryList The list of {@link Item} objects to save
+     * @param groceryList The list of {@link GroceryItem} objects to save
      * @param fileName The path to the CSV file to write
      * @throws IOException If an I/O error occurs while writing the file
      */
-    public static void saveToFile(List<Item> groceryList, String fileName) throws IOException {
+    public static void saveToFile(List<GroceryItem> groceryList, String fileName) throws IOException {
         List<String> lines = new ArrayList<>();
         lines.add(HEADER);
 
@@ -89,17 +89,17 @@ public class CsvHelper {
     }
 
     /**
-     * Formats a single {@link Item} object into a CSV-compatible string.
+     * Formats a single {@link GroceryItem} object into a CSV-compatible string.
      *
-     * @param item The item to format
-     * @return A string representing the item in CSV format
+     * @param groceryItem The groceryItem to format
+     * @return A string representing the groceryItem in CSV format
      */
-    private static String formatItemLine(Item item) {
-        return item.getName() + "," + item.quantity + "," + item.getCategory();
+    private static String formatItemLine(GroceryItem groceryItem) {
+        return groceryItem.getName() + "," + groceryItem.quantity + "," + groceryItem.getCategory();
     }
 
     /**
-     * Parses a single line from the CSV file and adds the resulting {@link Item}
+     * Parses a single line from the CSV file and adds the resulting {@link GroceryItem}
      * to the provided list.
      *
      * Handles errors such as incorrect format or number parsing issues
@@ -108,7 +108,7 @@ public class CsvHelper {
      * @param line The CSV line to parse
      * @param groceryList The list to which the item will be added
      */
-    private static void parseAndAddItem(String line, List<Item> groceryList) {
+    private static void parseAndAddItem(String line, List<GroceryItem> groceryList) {
         String[] parts = line.split(",");
         if (parts.length >= 2) {
             try {
@@ -120,7 +120,7 @@ public class CsvHelper {
                     category = parts[2].trim();
                 }
 
-                groceryList.add(new Item(itemName, quantity, category));
+                groceryList.add(new GroceryItem(itemName, quantity, category));
             } catch (NumberFormatException e) {
                 System.err.println("Invalid format in the file : " + line);
             }

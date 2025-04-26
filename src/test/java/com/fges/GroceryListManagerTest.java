@@ -46,12 +46,12 @@ class GroceryListManagerTest {
         manager.add("Apple", 5, "Fruits");
 
         // Then
-        List<Item> groceryList = manager.getGroceryList();
+        List<GroceryItem> groceryList = manager.getGroceryList();
         assertThat(groceryList).hasSize(1);
-        Item item = groceryList.get(0);
-        assertThat(item.getName()).isEqualTo("Apple");
-        assertThat(item.getQuantity()).isEqualTo(5);
-        assertThat(item.getCategory()).isEqualTo("Fruits");
+        GroceryItem groceryItem = groceryList.get(0);
+        assertThat(groceryItem.getName()).isEqualTo("Apple");
+        assertThat(groceryItem.getQuantity()).isEqualTo(5);
+        assertThat(groceryItem.getCategory()).isEqualTo("Fruits");
     }
 
     @Test
@@ -63,10 +63,10 @@ class GroceryListManagerTest {
         manager.add("Apple", 3, "Fruits");
 
         // Then
-        List<Item> groceryList = manager.getGroceryList();
+        List<GroceryItem> groceryList = manager.getGroceryList();
         assertThat(groceryList).hasSize(1);
-        Item item = groceryList.get(0);
-        assertThat(item.getQuantity()).isEqualTo(8);
+        GroceryItem groceryItem = groceryList.get(0);
+        assertThat(groceryItem.getQuantity()).isEqualTo(8);
     }
 
     @Test
@@ -76,7 +76,7 @@ class GroceryListManagerTest {
         manager.add("Apple", 3, "Organic");
 
         // Then
-        List<Item> groceryList = manager.getGroceryList();
+        List<GroceryItem> groceryList = manager.getGroceryList();
         assertThat(groceryList).hasSize(2);
         assertThat(groceryList.get(0).getCategory()).isEqualTo("Fruits");
         assertThat(groceryList.get(1).getCategory()).isEqualTo("Organic");
@@ -91,7 +91,7 @@ class GroceryListManagerTest {
         manager.remove("Apple", 2);
 
         // Then
-        List<Item> groceryList = manager.getGroceryList();
+        List<GroceryItem> groceryList = manager.getGroceryList();
         assertThat(groceryList).hasSize(1);
         assertThat(groceryList.get(0).getQuantity()).isEqualTo(3);
     }
@@ -105,7 +105,7 @@ class GroceryListManagerTest {
         manager.remove("Apple", 5);
 
         // Then
-        List<Item> groceryList = manager.getGroceryList();
+        List<GroceryItem> groceryList = manager.getGroceryList();
         assertThat(groceryList).isEmpty();
     }
 
@@ -120,7 +120,7 @@ class GroceryListManagerTest {
         manager.remove("Apple");
 
         // Then
-        List<Item> groceryList = manager.getGroceryList();
+        List<GroceryItem> groceryList = manager.getGroceryList();
         assertThat(groceryList).hasSize(1);
         assertThat(groceryList.get(0).getName()).isEqualTo("Banana");
     }
@@ -129,14 +129,14 @@ class GroceryListManagerTest {
     void saveToFile_should_call_dao_save() throws IOException {
         // Given
         manager.add("Apple", 5, "Fruits");
-        ArgumentCaptor<List<Item>> listCaptor = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<List<GroceryItem>> listCaptor = ArgumentCaptor.forClass(List.class);
 
         // When
         manager.saveToFile();
 
         // Then
         verify(mockDao).save(listCaptor.capture());
-        List<Item> savedList = listCaptor.getValue();
+        List<GroceryItem> savedList = listCaptor.getValue();
         assertThat(savedList).hasSize(1);
         assertThat(savedList.get(0).getName()).isEqualTo("Apple");
     }
@@ -146,13 +146,13 @@ class GroceryListManagerTest {
         // Given
         manager.add("Initial", 1, "Test");
 
-        List<Item> loadedItems = new ArrayList<>();
-        loadedItems.add(new Item("Loaded", 10, "Test"));
+        List<GroceryItem> loadedGroceryItems = new ArrayList<>();
+        loadedGroceryItems.add(new GroceryItem("Loaded", 10, "Test"));
 
         doAnswer(invocation -> {
-            List<Item> list = invocation.getArgument(0);
+            List<GroceryItem> list = invocation.getArgument(0);
             list.clear();
-            list.addAll(loadedItems);
+            list.addAll(loadedGroceryItems);
             return null;
         }).when(mockDao).load(any());
 
@@ -160,7 +160,7 @@ class GroceryListManagerTest {
         manager.loadFromFile();
 
         // Then
-        List<Item> groceryList = manager.getGroceryList();
+        List<GroceryItem> groceryList = manager.getGroceryList();
         assertThat(groceryList).hasSize(1);
         assertThat(groceryList.get(0).getName()).isEqualTo("Loaded");
     }

@@ -1,6 +1,6 @@
 package com.fges.util;
 
-import com.fges.Item;
+import com.fges.GroceryItem;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -21,10 +21,10 @@ class JsonHelperTest {
     @Test
     void saveToFile_should_save_multiple_items_in_array_format() throws IOException {
         // Given - multiple items
-        List<Item> groceryList = Arrays.asList(
-                new Item("Apple", 5, "Fruits"),
-                new Item("Banana", 3, "Fruits"),
-                new Item("Milk", 1, "Dairy")
+        List<GroceryItem> groceryList = Arrays.asList(
+                new GroceryItem("Apple", 5, "Fruits"),
+                new GroceryItem("Banana", 3, "Fruits"),
+                new GroceryItem("Milk", 1, "Dairy")
         );
 
         File tempFile = tempDir.resolve("test_multiple.json").toFile();
@@ -47,7 +47,7 @@ class JsonHelperTest {
     @Test
     void saveToFile_should_save_single_item_without_array() throws IOException {
         // Given - single item
-        List<Item> groceryList = List.of(new Item("pomme", 2, "default"));
+        List<GroceryItem> groceryList = List.of(new GroceryItem("pomme", 2, "default"));
 
         File tempFile = tempDir.resolve("test_single.json").toFile();
 
@@ -71,7 +71,7 @@ class JsonHelperTest {
         Files.writeString(tempFile.toPath(), jsonContent);
 
         // When
-        List<Item> result = JsonHelper.loadFromFile(tempFile.getAbsolutePath());
+        List<GroceryItem> result = JsonHelper.loadFromFile(tempFile.getAbsolutePath());
 
         // Then
         assertThat(result).hasSize(3);
@@ -94,14 +94,14 @@ class JsonHelperTest {
         Files.writeString(tempFile.toPath(), jsonContent);
 
         // When
-        List<Item> result = JsonHelper.loadFromFile(tempFile.getAbsolutePath());
+        List<GroceryItem> result = JsonHelper.loadFromFile(tempFile.getAbsolutePath());
 
         // Then
         assertThat(result).hasSize(1);
-        Item item = result.get(0);
-        assertThat(item.getName()).isEqualTo("Apple");
-        assertThat(item.getQuantity()).isEqualTo(5);
-        assertThat(item.getCategory()).isEqualTo("Fruits");
+        GroceryItem groceryItem = result.get(0);
+        assertThat(groceryItem.getName()).isEqualTo("Apple");
+        assertThat(groceryItem.getQuantity()).isEqualTo(5);
+        assertThat(groceryItem.getCategory()).isEqualTo("Fruits");
     }
 
     @Test
@@ -112,14 +112,14 @@ class JsonHelperTest {
         Files.writeString(tempFile.toPath(), jsonContent);
 
         // When
-        List<Item> result = JsonHelper.loadFromFile(tempFile.getAbsolutePath());
+        List<GroceryItem> result = JsonHelper.loadFromFile(tempFile.getAbsolutePath());
 
         // Then
         assertThat(result).hasSize(1);
-        Item item = result.get(0);
-        assertThat(item.getName()).isEqualTo("Apple");
-        assertThat(item.getQuantity()).isEqualTo(5);
-        assertThat(item.getCategory()).isEqualTo("Fruits");
+        GroceryItem groceryItem = result.get(0);
+        assertThat(groceryItem.getName()).isEqualTo("Apple");
+        assertThat(groceryItem.getQuantity()).isEqualTo(5);
+        assertThat(groceryItem.getCategory()).isEqualTo("Fruits");
     }
 
     @Test
@@ -130,7 +130,7 @@ class JsonHelperTest {
         Files.writeString(tempFile.toPath(), jsonContent);
 
         // When
-        List<Item> result = JsonHelper.loadFromFile(tempFile.getAbsolutePath());
+        List<GroceryItem> result = JsonHelper.loadFromFile(tempFile.getAbsolutePath());
 
         // Then
         assertThat(result).hasSize(2);
@@ -148,7 +148,7 @@ class JsonHelperTest {
         String nonExistentPath = tempDir.resolve("nonexistent.json").toString();
 
         // When
-        List<Item> result = JsonHelper.loadFromFile(nonExistentPath);
+        List<GroceryItem> result = JsonHelper.loadFromFile(nonExistentPath);
 
         // Then
         assertThat(result).isEmpty();
