@@ -1,4 +1,4 @@
-/*package com.fges;
+package com.fges;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,12 +36,35 @@ class CLITest {
         csvFile = tempDir.resolve("Grocery.csv");
     }
 
+
     @AfterEach
     void restoreStreams() {
         System.setOut(originalOut);
         System.setErr(originalErr);
     }
 
+
+    @Test
+    void should_display_system_info() {
+        String[] args = {"info"};
+
+        int result = CLI.exec(args);
+
+        assertThat(result).isEqualTo(0);
+        String output = outContent.toString();
+        assertThat(output).contains("Today's date");
+        assertThat(output).contains("Operating System");
+        assertThat(output).contains("Java version");
+    }
+
+    @Test
+    void should_contain_source_option() {
+        String[] args = {"-s", "Grocery.json", "-f", "json", "add", "Apple", "5"};
+        int result = CLI.exec(args);
+        assertThat(result).isEqualTo(0);
+    }
+
+    /*
     @Test
     void exec_should_add_item_to_json_file() throws IOException {
         // Given
@@ -104,25 +127,6 @@ class CLITest {
         assertThat(output).contains("5");
     }
 
-    @Test
-    void should_display_system_info() {
-        String[] args = {"info"};
-
-        int result = CLI.exec(args);
-
-        assertThat(result).isEqualTo(0);
-        String output = outContent.toString();
-        assertThat(output).contains("Today's date");
-        assertThat(output).contains("Operating System");
-        assertThat(output).contains("Java version");
-    }
-
-    @Test
-    void should_contain_source_option() {
-        String[] args = {"-s", "Grocery.json"};
-        int result = CLI.exec(args);
-        assertThat(result).isEqualTo(0);
-    }
 
     @Test
     void exec_should_remove_item() throws IOException {
@@ -194,4 +198,6 @@ class CLITest {
         assertThat(result).isEqualTo(1);
         assertThat(errContent.toString()).contains("Missing Command");
     }
-}*/
+
+     */
+}
