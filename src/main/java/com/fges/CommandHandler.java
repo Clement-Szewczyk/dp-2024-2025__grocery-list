@@ -16,6 +16,7 @@ public class CommandHandler {
     public int handleCommand(String commandName, String[] args, String category) {
         if (!registry.exists(commandName)) {
             System.err.println("Unknown command: " + commandName);
+
             return 1;
         }
 

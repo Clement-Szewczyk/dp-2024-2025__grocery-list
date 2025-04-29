@@ -12,20 +12,7 @@ import com.fges.GroceryItem;
 /**
  * Utility class for handling CSV input/output operations related to grocery items.
  * This class provides methods for loading grocery list items from a CSV file
- * and saving them back to a CSV file in a standardized format.
- *
- * The expected format of the CSV file is:
- *
- * GroceryItem,Quantité,Catégorie
- *
- * The first line is assumed to be a header and is skipped during loading.
- *
- * This class assumes that items are stored and read as {@link GroceryItem} objects,
- * and includes basic error handling for malformed lines or number conversion issues.
- *
- * @author Szewczyk Clément,
- *         Stievenard Emma,
- *         Laurency Yuna
+ and saving them back to a CSV file in a standardized format.
  */
 public class CsvHelper {
 
@@ -33,14 +20,7 @@ public class CsvHelper {
 
     /**
      * Loads grocery items from the specified CSV file.
-     *
      * If the file does not exist, an empty list is returned.
-     * The method expects each line (after the header) to follow the format:
-     * {@code itemName,quantity,category}
-     *
-     * @param fileName The path to the CSV file
-     * @return A list of {@link GroceryItem} objects loaded from the file
-     * @throws IOException If an I/O error occurs while reading the file
      */
     public static List<GroceryItem> loadFromFile(String fileName) throws IOException {
         List<GroceryItem> groceryList = new ArrayList<>();
@@ -70,12 +50,7 @@ public class CsvHelper {
      * Saves the given list of grocery items into the specified CSV file.
      *
      * The file is overwritten if it already exists. A header line is written first,
-     * followed by one line per item formatted as:
-     * {@code itemName,quantity,category}
-     *
-     * @param groceryList The list of {@link GroceryItem} objects to save
-     * @param fileName The path to the CSV file to write
-     * @throws IOException If an I/O error occurs while writing the file
+     * followed by one line per item.
      */
     public static void saveToFile(List<GroceryItem> groceryList, String fileName) throws IOException {
         List<String> lines = new ArrayList<>();
@@ -89,24 +64,15 @@ public class CsvHelper {
     }
 
     /**
-     * Formats a single {@link GroceryItem} object into a CSV-compatible string.
-     *
-     * @param groceryItem The groceryItem to format
-     * @return A string representing the groceryItem in CSV format
+     Formats a single GroceryItem object into a CSV-compatible string.
      */
     private static String formatItemLine(GroceryItem groceryItem) {
         return groceryItem.getName() + "," + groceryItem.quantity + "," + groceryItem.getCategory();
     }
 
     /**
-     * Parses a single line from the CSV file and adds the resulting {@link GroceryItem}
-     * to the provided list.
-     *
+     * Parses a single line from the CSV file and adds the resulting GroceryItem to the provided list.
      * Handles errors such as incorrect format or number parsing issues
-     * by logging to {@code System.err}.
-     *
-     * @param line The CSV line to parse
-     * @param groceryList The list to which the item will be added
      */
     private static void parseAndAddItem(String line, List<GroceryItem> groceryList) {
         String[] parts = line.split(",");
