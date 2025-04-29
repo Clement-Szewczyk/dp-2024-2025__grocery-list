@@ -9,18 +9,9 @@ import java.time.format.DateTimeFormatter;
 /**
  * Command Line Interface handler class for the grocery list application.
  * This class processes command line arguments and delegates operations to appropriate handlers.
- * It uses Apache Commons CLI for command line parsing and provides options for file format and item category.
- *
- * @author Szewczyk Clément, Stievenard Emma, Laurency Yuna
  */
 
 public class CLI {
-    /**
-     * Main entry point of the application.
-     * Calls the exec method and uses its return value as the exit code.
-     *
-     * @param args Command line arguments passed to the application
-     */
     public void main(String[] args) {
         System.exit(exec(args));
     }
@@ -28,10 +19,7 @@ public class CLI {
     /**
      * Executes the command line operations based on provided arguments.
      * Parses the arguments, validates them, initializes necessary components,
-     * and delegates the command execution to the appropriate handler.
-     *
-     * @param args Command line arguments to process
-     * @return An integer representing the exit code: 0 for success, non-zero for failure
+     and delegates the command execution to the appropriate handler.
      */
 
     public static int exec(String[] args) {

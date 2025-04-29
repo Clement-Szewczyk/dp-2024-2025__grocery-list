@@ -13,37 +13,17 @@ import com.fges.GroceryItem;
 
 /**
  * Utility class for handling JSON-based input/output operations related to grocery list items.
- *
- * Supports multiple JSON formats:
- *
- * Single item as an object
- * Multiple items as an array of objects
- * Simple list format (e.g., "Milk:2")
- * Categorized map format (e.g., {"Fruits": ["Apple 2", "Banana 3"]})
- *
  * This class centralizes all JSON reading/writing logic to keep the DAO layer clean.
- *
  * Uses the Jackson library for parsing and writing JSON files.
- *
- * @author Szewczyk Clément,
- *         Stievenard Emma,
- *         Laurency Yuna
+
  */
 public class JsonHelper {
-
-    /**
-     * Shared Jackson object mapper instance.
-     */
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     /**
      * Saves the given grocery list to a JSON file.
      * If the list contains only one item, it is stored as a single JSON object.
      * Otherwise, the list is saved as an array of objects.
-     *
-     * @param groceryList the list of items to be saved
-     * @param fileName the file path where to save the data
-     * @throws IOException if an error occurs during writing
      */
     public static void saveToFile(List<GroceryItem> groceryList, String fileName) throws IOException {
         if (groceryList.size() == 1) {
@@ -69,10 +49,6 @@ public class JsonHelper {
     /**
      * Loads a grocery list from a JSON file.
      * Tries multiple formats and returns the corresponding list of items.
-     *
-     * @param fileName the file path to load data from
-     * @return a list of items parsed from the file
-     * @throws IOException if the file is unreadable or unsupported format
      */
     public static List<GroceryItem> loadFromFile(String fileName) throws IOException {
         List<GroceryItem> groceryList = new ArrayList<>();
@@ -167,7 +143,7 @@ public class JsonHelper {
                 groceryList.add(new GroceryItem(name, quantity, category));
             }
         } catch (Exception e) {
-            System.err.println("Format invalide: " + itemString);
+            System.err.println("Wrong format: " + itemString);
         }
     }
 
@@ -191,12 +167,12 @@ public class JsonHelper {
 
             groceryList.add(new GroceryItem(itemName, quantity, category));
         } catch (Exception ex) {
-            System.err.println("Format invalide: " + itemMap);
+            System.err.println("Wrong format : " + itemMap);
         }
     }
 
     /**
-     * Parses a simplified entry like "Bread:1" and adds it to the list.
+     * Parses a simplified entry like "pain:1" and adds it to the list.
      */
     private static void parseSimpleEntry(String entry, List<GroceryItem> groceryList) {
         try {
@@ -207,7 +183,7 @@ public class JsonHelper {
                 groceryList.add(new GroceryItem(name, quantity, "default"));
             }
         } catch (NumberFormatException exc) {
-            System.err.println("Format invalide: " + entry);
+            System.err.println("Wrong format: " + entry);
         }
     }
 

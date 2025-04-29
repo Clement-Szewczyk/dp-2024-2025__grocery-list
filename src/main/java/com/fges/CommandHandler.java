@@ -4,19 +4,10 @@ package com.fges;
  * CommandHandler class processes and executes commands for the grocery list application.
  * It interprets command line arguments and delegates the appropriate operations to the GroceryListManager.
  * This class supports commands like list, add, and remove for managing grocery items.
- * @author Szewczyk Clément, Stievenard Emma, Laurency Yuna
  */
 
 public class CommandHandler {
-    /**
-     * The GroceryListManager instance that will perform the actual operations
-     */
     private final GroceryListManager manager;
-    /**
-     * Constructs a CommandHandler with the specified GroceryListManager.
-     *
-     * @param manager The GroceryListManager instance to use for grocery list operations
-     */
 
     public CommandHandler(GroceryListManager manager) {
         this.manager = manager;
@@ -24,14 +15,9 @@ public class CommandHandler {
     /**
      * Processes and executes a command based on the provided arguments.
      * Supported commands:
-     * - list: Lists all grocery items
-     * - add: Adds an item with specified name, quantity, and category
-     * - remove: Removes an item or reduces its quantity
-     *
-     * @param command The command to execute ("list", "add", or "remove")
-     * @param args The complete array of command line arguments
-     * @param category The category to use for new items (used by the "add" command)
-     * @return An integer representing the exit code: 0 for success, non-zero for failure
+      - list: Lists all grocery items
+      - add: Adds an item with specified name, quantity, and category
+      - remove: Removes an item or reduces its quantity
      */
     public int handleCommand(String command, String[] args, String category) {
         try {
@@ -48,7 +34,7 @@ public class CommandHandler {
                 // Extract item name from arguments
                 String itemName = args[1];
 
-                // Process commands using switch expression (Java 14+ feature)
+                // Process commands using switch expression
                 switch (command) {
                     case "add" -> {
                         // If quantity is provided, use it; otherwise default to 1
