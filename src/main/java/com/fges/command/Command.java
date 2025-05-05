@@ -3,6 +3,6 @@ package com.fges.command;
 import com.fges.GroceryListManager;
 
 public interface Command {
-
-    int execute(String[] args, GroceryListManager manager, String category);
+    // Version simplifiée utilisant CommandOption
+    int execute(GroceryListManager manager);
 }

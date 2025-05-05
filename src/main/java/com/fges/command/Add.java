@@ -2,13 +2,14 @@ package com.fges.command;
 
 import com.fges.GroceryListManager;
 
-
 public class Add implements Command {
-
-
     @Override
-    public int execute(String[] args, GroceryListManager manager, String category) {
+    public int execute(GroceryListManager manager) {
         try {
+            CommandOption options = CommandOption.getInstance();
+            String[] args = options.getCommandArgs();
+            String category = options.getCategory();
+            
             if (args.length < 2) {
                 System.err.println("Missing arguments for add command");
                 return 1;

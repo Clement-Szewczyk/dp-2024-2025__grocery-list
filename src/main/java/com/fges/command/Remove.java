@@ -4,8 +4,11 @@ import com.fges.GroceryListManager;
 
 public class Remove implements Command {
     @Override
-    public int execute(String[] args, GroceryListManager manager, String category) {
+    public int execute(GroceryListManager manager) {
         try {
+            CommandOption options = CommandOption.getInstance();
+            String[] args = options.getCommandArgs();
+            
             if (args.length < 2) {
                 System.err.println("Missing arguments for remove command");
                 return 1;

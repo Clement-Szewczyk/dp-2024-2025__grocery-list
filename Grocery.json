@@ -1,1 +1,2 @@
-{"quantity":2,"name":"pomme","category":"default"}
+GroceryItem,Quantité,Catégorie
+tomate,5,toto
