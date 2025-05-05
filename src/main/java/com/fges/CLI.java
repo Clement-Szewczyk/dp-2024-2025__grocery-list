@@ -1,10 +1,17 @@
 package com.fges;
 
-import org.apache.commons.cli.*;
-import com.fges.dao.GroceryListDAOFactory;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
+import com.fges.command.CommandOption;
+import com.fges.dao.GroceryListDAOFactory;
 
 /**
  * Command Line Interface handler class for the grocery list application.
@@ -23,10 +30,12 @@ public class CLI {
      */
 
     public static int exec(String[] args) {
+        // Reset options for a clean state (important for testing)
+        CommandOption.reset();
+        CommandOption options = CommandOption.getInstance();
 
         // Manage the case where the user wants to display the system information
-        if (args[0].equalsIgnoreCase("info")) {
-
+        if (args.length > 0 && args[0].equalsIgnoreCase("info")) {
             // Display system information and date
             String osName = System.getProperty("os.name");
             String javaVersion = System.getProperty("java.version");
@@ -67,6 +76,7 @@ public class CLI {
 
             // Get the format option value, defaulting to "json" if not specified
             String format = cmd.getOptionValue("format", "json").toLowerCase();
+            options.setFormat(format);
 
             // Validate the format value
             if (!format.equals("json") && !format.equals("csv")) {
@@ -74,24 +84,17 @@ public class CLI {
                 return 1;
             }
 
-            // Construct the filename based on the format
+            // Set the filename
             String fileName = cmd.getOptionValue("source");
+            options.setFileName(fileName);
 
             // Get the category option value, defaulting to "default" if not specified
             String category = cmd.getOptionValue("category", "default");
-
-            // Create the Data Access Object (DAO) for the specified format
-            var dao = GroceryListDAOFactory.createDAO(fileName, format);
-
-            // Create and initialize the GroceryListManager with the DAO
-            var manager = new GroceryListManager(dao);
-            manager.initialize();
-
-            // Create a CommandHandler to process the commands
-            var commandHandler = new CommandHandler(manager);
+            options.setCategory(category);
 
             // Get positional arguments (non-option arguments)
             String[] positionalArgs = cmd.getArgs();
+            options.setCommandArgs(positionalArgs);
 
             // Check if a command was provided
             if (positionalArgs.length == 0) {
@@ -101,14 +104,36 @@ public class CLI {
 
             // Extract the command (first positional argument)
             String command = positionalArgs[0];
+            options.setCommand(command);
 
-            // Delegate command handling to the CommandHandler
-            return commandHandler.handleCommand(command, positionalArgs, category);
+            // Create and run the application components
+            return createAndRunApplication();
 
         } catch (ParseException ex) {
             // Handle parsing errors
             System.err.println("Fail to parse arguments: " + ex.getMessage());
             return 1;
         }
+    }
+    
+    /**
+     * Creates application components and runs the command using the stored options.
+     * @return The result code of the command execution
+     */
+    private static int createAndRunApplication() {
+        CommandOption options = CommandOption.getInstance();
+        
+        // Create the Data Access Object (DAO) for the specified format
+        var dao = GroceryListDAOFactory.createDAO(options.getFileName(), options.getFormat());
+
+        // Create and initialize the GroceryListManager with the DAO
+        var manager = new GroceryListManager(dao);
+        manager.initialize();
+
+        // Create a CommandHandler to process the commands
+        var commandHandler = new CommandHandler(manager);
+
+        // Delegate command handling to the CommandHandler
+        return commandHandler.handleCommand();
     }
 }
