@@ -3,6 +3,7 @@ package com.fges;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import com.fges.dao.GroceryListDAO;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -34,24 +35,11 @@ public class CLI {
         CommandOption.reset();
         CommandOption options = CommandOption.getInstance();
 
-        // Manage the case where the user wants to display the system information
-        if (args.length > 0 && args[0].equalsIgnoreCase("info")) {
-            // Display system information and date
-            String osName = System.getProperty("os.name");
-            String javaVersion = System.getProperty("java.version");
-            LocalDate today = LocalDate.now();
-            String todayDate = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            System.out.println("Today's date : " + todayDate);
-            System.out.println("Operating System : " + osName);
-            System.out.println("Java version : " + javaVersion);
-            return 0;
-        }
-
         // Initialize command line options
         Options cliOptions = new Options();
         CommandLineParser parser = new DefaultParser();
 
-        cliOptions.addRequiredOption("s", "source", true, "File containing the grocery list");
+        cliOptions.addOption("s", "source", true, "File containing the grocery list");
 
         // Define the format option (-f, --format)
         cliOptions.addOption(Option.builder("f")
@@ -124,7 +112,14 @@ public class CLI {
         CommandOption options = CommandOption.getInstance();
         
         // Create the Data Access Object (DAO) for the specified format
-        var dao = GroceryListDAOFactory.createDAO(options.getFileName(), options.getFormat());
+        GroceryListDAO dao;
+
+        if (options.getCommand().equals("info")){
+            var commandHandler = new CommandHandler(null); // on passe null ou un manager vide
+            return commandHandler.handleCommand();
+        } else {
+            dao = GroceryListDAOFactory.createDAO(options.getFileName(), options.getFormat());
+        }
 
         // Create and initialize the GroceryListManager with the DAO
         var manager = new GroceryListManager(dao);
