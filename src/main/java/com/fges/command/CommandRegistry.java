@@ -11,6 +11,7 @@ public class CommandRegistry {
         commands.put("add", new Add());
         commands.put("remove", new Remove());
         commands.put("list", new List());
+        commands.put("web", new Web());
     }
     public Command getCommand(String commandName) {
         return commands.get(commandName.toLowerCase());

@@ -28,7 +28,6 @@ public class CLI {
      * Parses the arguments, validates them, initializes necessary components,
      and delegates the command execution to the appropriate handler.
      */
-
     public static int exec(String[] args) {
         // Reset options for a clean state (important for testing)
         CommandOption.reset();
@@ -115,14 +114,14 @@ public class CLI {
             return 1;
         }
     }
-    
+
     /**
      * Creates application components and runs the command using the stored options.
      * @return The result code of the command execution
      */
     private static int createAndRunApplication() {
         CommandOption options = CommandOption.getInstance();
-        
+
         // Create the Data Access Object (DAO) for the specified format
         var dao = GroceryListDAOFactory.createDAO(options.getFileName(), options.getFormat());
 
