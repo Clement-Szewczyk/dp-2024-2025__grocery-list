@@ -12,7 +12,6 @@ public class CommandRegistry {
         commands.put("remove", new Remove());
         commands.put("list", new List());
     }
-
     public Command getCommand(String commandName) {
         return commands.get(commandName.toLowerCase());
     }
