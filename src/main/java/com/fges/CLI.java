@@ -3,6 +3,7 @@ package com.fges;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import com.fges.dao.GroceryListDAO;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -28,29 +29,37 @@ public class CLI {
      * Parses the arguments, validates them, initializes necessary components,
      and delegates the command execution to the appropriate handler.
      */
+
     public static int exec(String[] args) {
         // Reset options for a clean state (important for testing)
         CommandOption.reset();
         CommandOption options = CommandOption.getInstance();
 
-        // Manage the case where the user wants to display the system information
-        if (args.length > 0 && args[0].equalsIgnoreCase("info")) {
-            // Display system information and date
-            String osName = System.getProperty("os.name");
-            String javaVersion = System.getProperty("java.version");
-            LocalDate today = LocalDate.now();
-            String todayDate = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            System.out.println("Today's date : " + todayDate);
-            System.out.println("Operating System : " + osName);
-            System.out.println("Java version : " + javaVersion);
-            return 0;
-        }
+        try {
+            // Parse and validate command line arguments
+            parseCommandLineArguments(args, options);
 
+            // Create and run the application components
+            return createAndRunApplication();
+        } catch (ParseException ex) {
+            // Handle parsing errors
+            System.err.println("Fail to parse arguments: " + ex.getMessage());
+            return 1;
+        } catch (IllegalArgumentException ex) {
+            // Handle validation errors
+            System.err.println(ex.getMessage());
+            return 1;
+        }
+    }
+
+
+    private static void parseCommandLineArguments(String[] args, CommandOption options)
+            throws ParseException, IllegalArgumentException {
         // Initialize command line options
         Options cliOptions = new Options();
         CommandLineParser parser = new DefaultParser();
 
-        cliOptions.addRequiredOption("s", "source", true, "File containing the grocery list");
+        cliOptions.addOption("s", "source", true, "File containing the grocery list");
 
         // Define the format option (-f, --format)
         cliOptions.addOption(Option.builder("f")
@@ -68,51 +77,38 @@ public class CLI {
                 .build()
         );
 
-        CommandLine cmd;
-        try {
-            // Parse the command line arguments
-            cmd = parser.parse(cliOptions, args);
+        // Parse the command line arguments
+        CommandLine cmd = parser.parse(cliOptions, args);
 
-            // Get the format option value, defaulting to "json" if not specified
-            String format = cmd.getOptionValue("format", "json").toLowerCase();
-            options.setFormat(format);
+        // Get the format option value, defaulting to "json" if not specified
+        String format = cmd.getOptionValue("format", "json").toLowerCase();
+        options.setFormat(format);
 
-            // Validate the format value
-            if (!format.equals("json") && !format.equals("csv")) {
-                System.err.println("Unsupported format: " + format);
-                return 1;
-            }
-
-            // Set the filename
-            String fileName = cmd.getOptionValue("source");
-            options.setFileName(fileName);
-
-            // Get the category option value, defaulting to "default" if not specified
-            String category = cmd.getOptionValue("category", "default");
-            options.setCategory(category);
-
-            // Get positional arguments (non-option arguments)
-            String[] positionalArgs = cmd.getArgs();
-            options.setCommandArgs(positionalArgs);
-
-            // Check if a command was provided
-            if (positionalArgs.length == 0) {
-                System.err.println("Missing Command");
-                return 1;
-            }
-
-            // Extract the command (first positional argument)
-            String command = positionalArgs[0];
-            options.setCommand(command);
-
-            // Create and run the application components
-            return createAndRunApplication();
-
-        } catch (ParseException ex) {
-            // Handle parsing errors
-            System.err.println("Fail to parse arguments: " + ex.getMessage());
-            return 1;
+        // Validate the format value
+        if (!format.equals("json") && !format.equals("csv")) {
+            throw new IllegalArgumentException("Unsupported format: " + format);
         }
+
+        // Set the filename
+        String fileName = cmd.getOptionValue("source");
+        options.setFileName(fileName);
+
+        // Get the category option value, defaulting to "default" if not specified
+        String category = cmd.getOptionValue("category", "default");
+        options.setCategory(category);
+
+        // Get positional arguments (non-option arguments)
+        String[] positionalArgs = cmd.getArgs();
+        options.setCommandArgs(positionalArgs);
+
+        // Check if a command was provided
+        if (positionalArgs.length == 0) {
+            throw new IllegalArgumentException("Missing Command");
+        }
+
+        // Extract the command (first positional argument)
+        String command = positionalArgs[0];
+        options.setCommand(command);
     }
 
     /**
@@ -123,7 +119,14 @@ public class CLI {
         CommandOption options = CommandOption.getInstance();
 
         // Create the Data Access Object (DAO) for the specified format
-        var dao = GroceryListDAOFactory.createDAO(options.getFileName(), options.getFormat());
+        GroceryListDAO dao;
+
+        if (options.getCommand().equals("info")){
+            var commandHandler = new CommandHandler(null); // on passe null ou un manager vide
+            return commandHandler.handleCommand();
+        } else {
+            dao = GroceryListDAOFactory.createDAO(options.getFileName(), options.getFormat());
+        }
 
         // Create and initialize the GroceryListManager with the DAO
         var manager = new GroceryListManager(dao);
