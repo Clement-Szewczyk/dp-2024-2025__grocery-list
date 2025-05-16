@@ -40,3 +40,4 @@ build/
 
 ### fichier CSV et JSON ###
 *.csv
+*.json
