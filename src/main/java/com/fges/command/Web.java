@@ -1,6 +1,5 @@
 package com.fges.command;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -93,11 +92,9 @@ public class Web implements Command {
 
             @Override
             public Runtime getRuntime() {
-                return new Runtime(
-                        LocalDate.now(),
-                        System.getProperty("java.version"),
-                        System.getProperty("os.name")
-                );
+                // Utiliser la classe Info pour obtenir les informations système
+                Info infoCommand = new Info();
+                return infoCommand.getSystemInfo();
             }
         };
     }
