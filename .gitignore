@@ -40,3 +40,5 @@ build/
 
 ### fichier CSV et JSON ###
 *.csv
+/java/*.json
+/java/*.csv
