@@ -37,7 +37,7 @@ public class Web implements Command {
         }
     }
 
-    private int configureServerPort() throws NumberFormatException {
+    public int configureServerPort() throws NumberFormatException {
         CommandOption options = CommandOption.getInstance();
         String[] args = options.getCommandArgs();
 
