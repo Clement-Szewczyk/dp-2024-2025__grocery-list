@@ -1,12 +1,19 @@
 # Rapport n°4 sur le Projet "Grocery List"
 
-## Ce que nous n'avons pas eu le temps de faire
+## Ce pour quoi vous n'avez pas eu le temps
 
+Nous n'avons malheureusement pas eu suffisamment de temps pour développer une suite complète de tests pour l'interface web, ce qui aurait permis de garantir une meilleure stabilité et fiabilité de cette fonctionnalité.
 
+## Ce qui était difficile
 
-## Ce qui était challengeant
+L'implémentation de notre architecture a présenté plusieurs défis techniques :
 
-
+- Refactorisation importante de la logique d'exécution des commandes
+- Gestion complexe des différents formats de sauvegarde et leurs dépendances
+- Centralisation du mécanisme de création des objets d'accès aux données
+- Maintien de la rétrocompatibilité dans la gestion des arguments CLI
+- Équilibre entre la gestion globale des options de commande et la testabilité du code
+- Mise en place de tests unitaires et d'intégration couvrant toutes les nouvelles fonctionnalités
 
 ## Design Patterns utilisés
 
