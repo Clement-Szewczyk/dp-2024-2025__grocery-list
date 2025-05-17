@@ -4,6 +4,8 @@
 
 Nous n'avons malheureusement pas eu suffisamment de temps pour développer une suite complète de tests pour l'interface web, ce qui aurait permis de garantir une meilleure stabilité et fiabilité de cette fonctionnalité.
 
+La refactorisation de la classe GroceryListManager aurait nécessité une révision majeure de notre structure de code. Cette classe étant devenue trop volumineuse, son allègement aurait été bénéfique mais aurait demandé un temps considérable que nous n'avions pas à disposition.
+
 ## Ce qui était difficile
 
 L'implémentation de notre architecture a présenté plusieurs défis techniques :
