@@ -10,7 +10,7 @@ import fr.anthonyquere.MyGroceryShop.Runtime;
 public class Info implements Command {
     @Override
     public int execute(GroceryListManager manager) {
-        // Utiliser la méthode getSystemInfo et afficher les informations
+        // Use the method getSystemInfo et show informations
         Runtime runtime = getSystemInfo();
 
         System.out.println("Today's date: " + LocalDate.now());
@@ -21,9 +21,7 @@ public class Info implements Command {
     }
     
     /**
-     * Récupère les informations système sous forme d'objet Runtime
-     * @return Un objet Runtime contenant les informations système
-     */
+     * Get system informations as a Runtime object */
     public Runtime getSystemInfo() {
         LocalDate today = LocalDate.now();
         String osName = System.getProperty("os.name");

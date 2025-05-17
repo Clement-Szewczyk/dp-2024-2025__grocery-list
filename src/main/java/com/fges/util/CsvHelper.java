@@ -48,7 +48,6 @@ public class CsvHelper {
 
     /**
      * Saves the given list of grocery items into the specified CSV file.
-     *
      * The file is overwritten if it already exists. A header line is written first,
      * followed by one line per item.
      */
