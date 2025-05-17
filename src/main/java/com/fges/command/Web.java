@@ -11,14 +11,11 @@ import com.fges.GroceryListManager;
 import fr.anthonyquere.GroceryShopServer;
 import fr.anthonyquere.MyGroceryShop;
 
-/**
- * Commande pour exécuter le serveur web de l'application
- */
 public class Web implements Command {
-    // Constantes pour les messages (facilitera l'internationalisation future)
-    private static final String MSG_SERVER_STARTED = "Serveur web démarré sur http://localhost:{}";
-    private static final String MSG_PORT_INVALID = "Port invalide: %s";
-    private static final String MSG_SERVER_ERROR = "Erreur lors du démarrage du serveur web";
+    // Constants for messages (will facilitate future internationalization)
+    private static final String MSG_SERVER_STARTED = "Web server started on http://localhost:{}";
+    private static final String MSG_PORT_INVALID = "Invalid port: %s";
+    private static final String MSG_SERVER_ERROR = "Error starting the web server";
     private static final int DEFAULT_PORT = 8080;
     
     // Logger au lieu de System.out/err
@@ -27,7 +24,7 @@ public class Web implements Command {
     @Override
     public int execute(GroceryListManager manager) {
         try {
-            // Extraction des méthodes pour mieux séparer les responsabilités
+            // Extraction of methods to better separate responsibilities
             int port = configureServerPort();
             MyGroceryShop groceryShop = createGroceryShopAdapter(manager);
             return startServer(port, groceryShop);
@@ -39,12 +36,7 @@ public class Web implements Command {
             return 1;
         }
     }
-    
-    /**
-     * Configure le port du serveur web en fonction des arguments
-     * @return le port configuré ou le port par défaut
-     * @throws NumberFormatException si le port spécifié n'est pas un nombre valide
-     */
+
     private int configureServerPort() throws NumberFormatException {
         CommandOption options = CommandOption.getInstance();
         String[] args = options.getCommandArgs();
@@ -61,9 +53,7 @@ public class Web implements Command {
     }
     
     /**
-     * Crée un adaptateur pour le serveur web basé sur le gestionnaire de liste de courses
-     * @param manager le gestionnaire de liste de courses
-     * @return l'adaptateur configuré
+     * Creates an adapter for the web server based on the grocery list manager
      */
     private MyGroceryShop createGroceryShopAdapter(final GroceryListManager manager) {
         return new MyGroceryShop() {
@@ -92,26 +82,20 @@ public class Web implements Command {
 
             @Override
             public Runtime getRuntime() {
-                // Utiliser la classe Info pour obtenir les informations système
+                // Use the Info class to get system information
                 Info infoCommand = new Info();
                 return infoCommand.getSystemInfo();
             }
         };
     }
-    
-    /**
-     * Démarre le serveur web sur le port spécifié avec l'adaptateur fourni
-     * @param port le port sur lequel démarrer le serveur
-     * @param groceryShop l'adaptateur pour la boutique
-     * @return le code de sortie (0 si réussi, 1 si échec)
-     */
+
     private int startServer(int port, MyGroceryShop groceryShop) {
         GroceryShopServer server = new GroceryShopServer(groceryShop);
 
         try {
             server.start(port);
-            logger.info("Serveur web démarré sur http://localhost:" + port);
-            // Maintient le thread actif pour garder le serveur en cours d'exécution
+            logger.info("Web server started on http://localhost:" + port);
+            // Keeps the current thread active to keep the server running
             Thread.currentThread().join();
             return 0;
         } catch (Exception e) {

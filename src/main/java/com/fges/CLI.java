@@ -111,10 +111,9 @@ public class CLI {
         options.setCommand(command);
     }
 
-    /**
-     * Creates application components and runs the command using the stored options.
-     * @return The result code of the command execution
-     */
+
+     //Creates application components and runs the command using the stored options.
+
     private static int createAndRunApplication() {
         CommandOption options = CommandOption.getInstance();
 

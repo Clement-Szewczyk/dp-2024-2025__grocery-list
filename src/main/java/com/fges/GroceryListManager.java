@@ -21,9 +21,9 @@ public class GroceryListManager {
         this.groceryList = new ArrayList<>();
     }
 
-    /**
-     * Initializes the manager by loading the grocery list from storage.
-     */
+
+     //Initializes the manager by loading the grocery list from storage.
+
     public void initialize() {
         loadFromFile();
     }

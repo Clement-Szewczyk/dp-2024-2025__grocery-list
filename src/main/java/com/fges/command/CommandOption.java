@@ -23,7 +23,6 @@ public class CommandOption {
     
     /**
      * Gets the singleton instance of the command options.
-     * @return The CommandOption instance
      */
     public static synchronized CommandOption getInstance() {
         if (instance == null) {
